@@ -4,16 +4,17 @@ Atualizado em: 2026-09-19
 
 ## Direção
 
-Cartoon 2D lateral, expressivo e legível em celulares. A estética mistura férias tropicais alegres com urgência cômica. O humor vem da situação e das reações, nunca do corpo dos personagens.
+Cartoon 2D lateral vetorial, expressivo e legível em celulares. A estética mistura férias tropicais alegres com urgência cômica. O humor vem da situação e das reações, nunca do corpo dos personagens.
 
 ## Linguagem visual
 
 - formas grandes e silhuetas reconhecíveis;
 - contorno azul-marinho espesso e consistente;
-- cel shading limpo, com poucos níveis de luz;
+- preenchimentos vetoriais planos, com no máximo três níveis de luz;
 - detalhes reduzidos para leitura entre 64 e 160 px;
 - movimento elástico, expressões amplas e poses claras;
 - perspectiva lateral ortográfica no gameplay;
+- SVG modular e editável para personagem, UI, itens e props; fundos também usam formas vetoriais simplificadas.
 - interface com volumes brilhantes e ícones compactos.
 
 ## Paleta principal
@@ -76,4 +77,3 @@ O logo principal usa `BATHROOM MAYHEM` em aqua e coral, com `FULL PRESSURE` subo
 - gore ou material escatológico realista;
 - mudança de anatomia, cabelo ou rosto entre sprites;
 - texto gerado dentro de props ou ícones.
-

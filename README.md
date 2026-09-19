@@ -22,6 +22,7 @@ Projeto em Godot com uma janela de **7 dias** para produzir uma primeira versão
 - [Portões de qualidade](QUALITY_GATES.md)
 - [Art Bible](ART_BIBLE.md)
 - [Reinício da produção visual](ART_PIPELINE_RESET.md)
+- [Plano de arte do prólogo](PROLOGUE_ART_PLAN.md)
 - [Manifesto de assets](ASSET_MANIFEST.md)
 - [Entrada de referências do chat 00](references/from_chat_00/README.md)
 - [Configuração do GitHub e itch.io](GIT_AND_ITCH_SETUP.md)
