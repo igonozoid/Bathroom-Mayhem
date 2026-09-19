@@ -56,6 +56,9 @@ Mudanças relevantes no projeto e em sua documentação.
 - licença proprietária e registro inicial de componentes de terceiros;
 - rascunho completo da página de teste no itch.io;
 - roteiro de criação dos projetos GitHub/itch.io e script de publicação com bloqueio do APK obsoleto.
+- repositório privado `igonozoid/Bathroom-Mayhem` criado e sincronizado na branch `main`;
+- referências visuais enviadas via Git LFS com verificação íntegra;
+- página `bathroom-mayhem-full-pressure` criada no itch.io em modo Draft, ainda sem APK.
 
 ### Alterado
 

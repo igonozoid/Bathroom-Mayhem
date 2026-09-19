@@ -5,14 +5,20 @@ Atualizado em: 2026-09-19
 ## Estado preparado localmente
 
 - Git iniciado na branch `main`;
+- repositório privado conectado: `https://github.com/igonozoid/Bathroom-Mayhem`;
 - imagens e áudio configurados para Git LFS;
 - engine portátil, builds, ferramentas, segredos e keystores ignorados;
 - repositório destinado a ser **privado**;
 - APK destinado primeiro a uma página itch.io **Draft**, depois **Restricted**.
+- página Draft criada: `https://igonoz.itch.io/bathroom-mayhem-full-pressure`.
+
+Primeiro push concluído em 2026-09-19, commit `c0722dd`.
 
 Nunca envie senha, token, chave privada ou arquivo de assinatura pelo chat. Faça login apenas nas páginas e ferramentas oficiais.
 
 ## 1. Criar o repositório no GitHub
+
+> Concluído. As instruções abaixo permanecem como referência para novos computadores.
 
 1. Entre em `github.com` no navegador.
 2. Use **New repository**.
@@ -65,4 +71,3 @@ Depois que o APK canônico passar pelos portões de qualidade:
 ```
 
 O script recusa a publicação se a build estiver ausente, se os campos não estiverem preenchidos ou se o arquivo ainda for o APK obsoleto conhecido.
-

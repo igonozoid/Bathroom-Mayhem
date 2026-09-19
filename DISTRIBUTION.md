@@ -72,6 +72,8 @@ Criar inicialmente uma página como **Draft** ou **Restricted**, tipo “Downloa
 
 O texto e os metadados da página estão preparados em `ITCH_PAGE.md`. O fluxo de autenticação e envio está documentado em `GIT_AND_ITCH_SETUP.md`. O script `tools/publish_itch.sh` bloqueia intencionalmente o APK top-down obsoleto.
 
+Página Draft criada em: `https://igonoz.itch.io/bathroom-mayhem-full-pressure`. Nenhum APK foi publicado ainda.
+
 ## Roteiro mínimo de teste
 
 - [ ] APK instala sem erro.
