@@ -78,6 +78,7 @@ Mudanças relevantes no projeto e em sua documentação.
 - fluxo de PC cobre splash, menu, tutorial, reinício e gameplay com Enter/Espaço, seta para baixo, F e R.
 - força e sustentação de pulo aumentadas para superar obstáculos com margem legível.
 - arquivo histórico do chat 00 organizado em `references/from_chat_00/source_images/`, sem arquivos PNG soltos na raiz.
+- versão de APK reclassificada como protótipo técnico, não candidata à publicação, por falta de coesão visual e revisão em tela real.
 
 ### Alterado
 

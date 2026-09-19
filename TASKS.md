@@ -68,3 +68,4 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - O APK atual contém gameplay top-down/joystick e não está aprovado para playtest do conceito.
 - Captura de PNG não funciona no backend headless sem textura de viewport; a inspeção visual deste marco precisa ocorrer no editor com janela ou em aparelho Android.
 - Prazo curto exige congelamento precoce de escopo.
+- **Marco de apresentação reaberto:** o APK técnico não satisfaz coesão visual; ver `RECOVERY_PLAN.md`. Nenhuma publicação será feita antes da fase única ser revisada visualmente.

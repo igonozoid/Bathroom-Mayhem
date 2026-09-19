@@ -6,7 +6,7 @@ const PLAYER_X := 112.0
 const SPEED := 275.0
 const GRAVITY := 1750.0
 const JUMP_POWER := -780.0
-const GOAL := 6200.0
+const GOAL := 15400.0
 const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
 const LUANA_RUN_CONTACT := preload("res://assets/art/characters/luana/v2/luana_run_contact_v2.png")
 const LUANA_RUN_PASSING := preload("res://assets/art/characters/luana/v2/luana_run_passing_v2.png")
@@ -19,6 +19,7 @@ const LUANA_RUN_PUSH_OFF := preload("res://assets/art/characters/luana/v2/luana_
 const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
 const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
 const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
+const LOGO := preload("res://assets/art/branding/bathroom_mayhem_logo_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
 const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
 const PLAYER_RUN_SCALE := 0.095
@@ -57,6 +58,7 @@ var result_text: Label
 var splash_panel: Panel
 var menu_panel: Panel
 var tutorial_panel: Panel
+var stage_label: Label
 
 
 func _ready() -> void:
@@ -127,8 +129,14 @@ func set_luana_texture(texture: Texture2D, scale_value: float) -> void:
 
 
 func build_course() -> void:
-	for spec in [[650.0,"paper",705.0],[975.0,"tourist",792.0],[1210.0,"water",700.0],[1490.0,"seagull",720.0],[1790.0,"paper",705.0],[2080.0,"dog",792.0],[2390.0,"coffee",700.0],[2690.0,"seagull",720.0],[3020.0,"paper",705.0],[3350.0,"tourist",792.0],[3640.0,"water",700.0],[3950.0,"dog",792.0],[4280.0,"paper",705.0],[4560.0,"seagull",720.0],[4880.0,"paper",705.0],[5200.0,"tourist",792.0],[5520.0,"water",700.0],[GOAL,"toilet",676.0]]:
+	for spec in [[650.0,"paper",705.0],[975.0,"tourist",792.0],[1210.0,"water",700.0],[1490.0,"seagull",720.0],[1790.0,"paper",705.0],[2080.0,"dog",792.0],[2390.0,"coffee",700.0],[2690.0,"seagull",720.0],[3020.0,"paper",705.0],[3350.0,"tourist",792.0],[3640.0,"water",700.0],[3950.0,"dog",792.0],[4280.0,"paper",705.0],[4560.0,"seagull",720.0],[4880.0,"paper",705.0],[5200.0,"tourist",792.0],[5520.0,"water",700.0]]:
 		course.append({"x": spec[0], "kind": spec[1], "y": spec[2], "used": false})
+	var late_pattern := ["paper", "tourist", "water", "seagull", "dog", "coffee"]
+	for marker in range(5900, int(GOAL), 345):
+		var kind: String = late_pattern[int(marker / 345) % late_pattern.size()]
+		var height := 720.0 if kind == "seagull" else 792.0 if kind in ["tourist", "dog"] else 705.0
+		course.append({"x": float(marker), "kind": kind, "y": height, "used": false})
+	course.append({"x": GOAL, "kind": "toilet", "y": 676.0, "used": false})
 
 
 func _physics_process(delta: float) -> void:
@@ -361,7 +369,8 @@ func build_hud() -> void:
 	var back := ColorRect.new(); back.position=Vector2(133,66); back.size=Vector2(250,17); back.color=Color("402946"); root.add_child(back)
 	pressure_fill=ColorRect.new(); pressure_fill.position=Vector2(133,66); pressure_fill.size=Vector2(40,17); root.add_child(pressure_fill)
 	paper_label=label("PAPEL 00",16,Color("fff3c7"),Rect2(398,61,108,25)); root.add_child(paper_label)
-	distance_label=label("BANHEIRO 6.2 km",16,Color("d6f8ff"),Rect2(32,104,190,25)); root.add_child(distance_label)
+	distance_label=label("BANHEIRO 15.4 km",16,Color("d6f8ff"),Rect2(32,104,190,25)); root.add_child(distance_label)
+	stage_label=label("BEACH ENTRANCE",14,Color("b9f8f3"),Rect2(32,136,476,20)); stage_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(stage_label)
 	score_label=label("DIGNIDADE 100  •  CAOS x0",16,Color("ffd88e"),Rect2(230,104,270,25)); score_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT; root.add_child(score_label)
 	event_label=label("",19,Color.WHITE,Rect2(32,175,476,32)); event_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(event_label)
 	root.add_child(make_panel(Rect2(16,856,508,88),Color(0.04,0.11,0.18,0.82),18))
@@ -376,16 +385,15 @@ func build_frontend() -> void:
 	var layer := CanvasLayer.new(); layer.layer = 10; add_child(layer)
 	var root := Control.new(); root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); layer.add_child(root)
 	splash_panel = make_panel(Rect2(0, 0, 540, 960), Color("102c46"), 0); splash_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(splash_panel)
-	var splash_title := label("BATHROOM\nMAYHEM", 48, Color("fff0bd"), Rect2(45, 275, 450, 132)); splash_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_title)
-	var splash_sub := label("FULL PRESSURE", 21, Color("68e2da"), Rect2(45, 420, 450, 32)); splash_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_sub)
+	var splash_logo := TextureRect.new(); splash_logo.texture = LOGO; splash_logo.position = Vector2(18, 195); splash_logo.size = Vector2(504, 336); splash_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE; splash_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED; splash_panel.add_child(splash_logo)
 	var splash_wait := label("CARREGANDO A EMERGÊNCIA...", 16, Color("fff5d6"), Rect2(45, 730, 450, 28)); splash_wait.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_wait)
 
 	menu_panel = make_panel(Rect2(28, 120, 484, 700), Color("102c46"), 28); menu_panel.visible = false; menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(menu_panel)
-	var menu_title := label("BATHROOM MAYHEM", 32, Color("fff0bd"), Rect2(24, 70, 436, 54)); menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_title)
-	var menu_sub := label("FULL PRESSURE\nChegue ao banheiro antes do desastre.", 18, Color("b9f8f3"), Rect2(38, 145, 408, 65)); menu_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_sub.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_sub)
-	var play := make_button("CORRER!", Rect2(70, 288, 344, 70)); play.pressed.connect(show_tutorial); menu_panel.add_child(play)
-	var how := make_button("COMO JOGAR", Rect2(70, 380, 344, 58)); how.pressed.connect(show_tutorial); menu_panel.add_child(how)
-	var menu_note := label("Versão de teste • toque com uma mão", 15, Color("ffe09b"), Rect2(30, 570, 424, 30)); menu_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_note)
+	var menu_logo := TextureRect.new(); menu_logo.texture = LOGO; menu_logo.position = Vector2(12, 24); menu_logo.size = Vector2(460, 260); menu_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE; menu_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED; menu_panel.add_child(menu_logo)
+	var menu_sub := label("A PRAIA ESTÁ ENTRE VOCÊ E O BANHEIRO.", 15, Color("b9f8f3"), Rect2(38, 280, 408, 35)); menu_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_sub)
+	var play := make_button("INICIAR CORRIDA", Rect2(70, 348, 344, 70)); play.pressed.connect(show_tutorial); menu_panel.add_child(play)
+	var how := make_button("CONTROLES", Rect2(70, 436, 344, 58)); how.pressed.connect(show_tutorial); menu_panel.add_child(how)
+	var menu_note := label("Vertical slice • uma fase • toque ou teclado", 15, Color("ffe09b"), Rect2(30, 570, 424, 30)); menu_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_note)
 
 	tutorial_panel = make_panel(Rect2(28, 100, 484, 740), Color("102c46"), 28); tutorial_panel.visible = false; tutorial_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(tutorial_panel)
 	var tutorial_title := label("COMO JOGAR", 30, Color("fff0bd"), Rect2(24, 48, 436, 46)); tutorial_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_title)
@@ -395,8 +403,8 @@ func build_frontend() -> void:
 
 func make_button(value: String, rect: Rect2) -> Button:
 	var node := Button.new(); node.text = value; node.position = rect.position; node.size = rect.size; node.add_theme_font_size_override("font_size", 20); node.add_theme_color_override("font_color", Color("102c46"))
-	var normal := StyleBoxFlat.new(); normal.bg_color = Color("68e2da"); normal.corner_radius_top_left = 16; normal.corner_radius_top_right = 16; normal.corner_radius_bottom_left = 16; normal.corner_radius_bottom_right = 16
-	var pressed := StyleBoxFlat.new(); pressed.bg_color = Color("fff0bd"); pressed.corner_radius_top_left = 16; pressed.corner_radius_top_right = 16; pressed.corner_radius_bottom_left = 16; pressed.corner_radius_bottom_right = 16
+	var normal := StyleBoxFlat.new(); normal.bg_color = Color("68e2da"); normal.set_corner_radius_all(16); normal.border_color = Color("173c5d"); normal.set_border_width_all(4); normal.shadow_color = Color(0.02, 0.08, 0.14, 0.65); normal.shadow_size = 6; normal.shadow_offset = Vector2(0, 4)
+	var pressed := StyleBoxFlat.new(); pressed.bg_color = Color("fff0bd"); pressed.set_corner_radius_all(16); pressed.border_color = Color("173c5d"); pressed.set_border_width_all(4)
 	node.add_theme_stylebox_override("normal", normal); node.add_theme_stylebox_override("pressed", pressed); return node
 
 
@@ -426,6 +434,15 @@ func update_hud() -> void:
 	pressure_fill.size.x=250.0*clampf(pressure/100.0,0,1); pressure_fill.color=Color("67ddcc").lerp(Color("ff5f70"),pressure/100.0)
 	paper_label.text="PAPEL %02d"%paper; distance_label.text="BANHEIRO %.1f km"%maxf(0,(GOAL-distance)/1000.0); score_label.text="DIGNIDADE %03d  •  CAOS x%d"%[dignity,mayhem]
 	relief_label.text="TOQUE DUPLO: CONTROLLED RELIEF" if relief_cooldown<=0 else "ALÍVIO RECARGA: %.1fs"%relief_cooldown
+	stage_label.text = stage_name()
+
+
+func stage_name() -> String:
+	var ratio := distance / GOAL
+	if ratio < 0.25: return "1/4  •  BEACH ENTRANCE"
+	if ratio < 0.50: return "2/4  •  BOARDWALK"
+	if ratio < 0.75: return "3/4  •  KIOSK RUSH"
+	return "4/4  •  RESTROOM RUN"
 
 
 func show_event(text: String, color: Color) -> void:
