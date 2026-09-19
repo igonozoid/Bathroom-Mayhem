@@ -5,17 +5,21 @@ const GROUND := 792.0
 const PLAYER_X := 112.0
 const SPEED := 275.0
 const GRAVITY := 1750.0
-const JUMP_POWER := -650.0
+const JUMP_POWER := -780.0
 const GOAL := 6200.0
 const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
 const LUANA_RUN_CONTACT := preload("res://assets/art/characters/luana/v2/luana_run_contact_v2.png")
 const LUANA_RUN_PASSING := preload("res://assets/art/characters/luana/v2/luana_run_passing_v2.png")
+const LUANA_RUN_RECOIL := preload("res://assets/art/characters/luana/v2/luana_run_recoil_v2.png")
+const LUANA_RUN_HIGH_KNEE := preload("res://assets/art/characters/luana/v2/luana_run_high_knee_v2.png")
 const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
 const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
 const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
 const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
 const PLAYER_RUN_SCALE := 0.095
+const RUN_CYCLE := [LUANA_RUN_CONTACT, LUANA_RUN_RECOIL, LUANA_RUN_PASSING, LUANA_RUN_HIGH_KNEE]
+const RUN_SCALES := [0.095, 0.089, 0.095, 0.080]
 
 var luana: Sprite2D
 var player_y := GROUND
@@ -132,9 +136,9 @@ func _physics_process(delta: float) -> void:
 	slide_time = maxf(0.0, slide_time - delta)
 	if Input.is_action_just_pressed("jump"):
 		jump()
-	if Input.is_action_pressed("jump") and jump_held and hold_time < 0.18 and velocity_y < 0:
+	if Input.is_action_pressed("jump") and jump_held and hold_time < 0.22 and velocity_y < 0:
 		hold_time += delta
-		velocity_y -= 780.0 * delta
+		velocity_y = maxf(-1050.0, velocity_y - 1080.0 * delta)
 		jump_extended = jump_extended or hold_time >= 0.06
 	if Input.is_action_just_released("jump"):
 		jump_held = false
@@ -156,7 +160,9 @@ func _physics_process(delta: float) -> void:
 
 
 func update_luana() -> void:
-	luana.position = Vector2(PLAYER_X, player_y - (48.0 if sliding() else 61.0))
+	var running_bob := sin(world_time * 16.0) * 2.0 if player_y >= GROUND - 1 and not sliding() else 0.0
+	luana.position = Vector2(PLAYER_X, player_y - (48.0 if sliding() else 61.0) + running_bob)
+	luana.rotation = sin(world_time * 8.0) * 0.012 if player_y >= GROUND - 1 and not sliding() else 0.0
 	if sliding():
 		set_luana_frame(Rect2(932, 410, 310, 392), 0.27)
 	elif player_y < GROUND - 8:
@@ -164,7 +170,8 @@ func update_luana() -> void:
 	elif pressure >= 72:
 		set_luana_frame(Rect2(320, 820, 315, 405), 0.29)
 	else:
-		set_luana_texture(LUANA_RUN_CONTACT if int(distance / 58.0) % 2 == 0 else LUANA_RUN_PASSING, PLAYER_RUN_SCALE)
+		var run_index := int(distance / 34.0) % RUN_CYCLE.size()
+		set_luana_texture(RUN_CYCLE[run_index], RUN_SCALES[run_index])
 
 
 func sliding() -> bool:
@@ -173,7 +180,7 @@ func sliding() -> bool:
 
 func jump() -> void:
 	if player_y >= GROUND - 1 and not sliding():
-		velocity_y = JUMP_POWER * 0.84
+		velocity_y = JUMP_POWER
 		hold_time = 0
 		jump_extended = false
 		jump_held = true
@@ -236,9 +243,15 @@ func check_course() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_R and state in ["won", "lost"]:
-		get_tree().reload_current_scene()
-		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if state == "splash":
+			show_menu(); return
+		if state == "menu" and event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
+			show_tutorial(); return
+		if state == "tutorial" and event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
+			start_run(); return
+		if state in ["won", "lost"] and event.keycode in [KEY_R, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
+			get_tree().reload_current_scene(); return
 	if state != "running":
 		return
 	if event is InputEventScreenTouch:
@@ -372,7 +385,7 @@ func build_frontend() -> void:
 
 	tutorial_panel = make_panel(Rect2(28, 100, 484, 740), Color("102c46"), 28); tutorial_panel.visible = false; tutorial_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(tutorial_panel)
 	var tutorial_title := label("COMO JOGAR", 30, Color("fff0bd"), Rect2(24, 48, 436, 46)); tutorial_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_title)
-	var tutorial_copy := label("TOQUE\nPulo curto\n\nSEGURE\nPulo alto\n\nSWIPE ↓\nDeslize sob a gaivota\n\nTOQUE DUPLO\nControlled Relief", 19, Color("f5fbff"), Rect2(72, 122, 340, 390)); tutorial_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_copy.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_copy)
+	var tutorial_copy := label("TOQUE / ESPAÇO\nPulo curto\n\nSEGURE / ESPAÇO\nPulo alto\n\nSWIPE ↓ / SETA ↓\nDeslize sob a gaivota\n\nTOQUE DUPLO / F\nControlled Relief", 18, Color("f5fbff"), Rect2(72, 112, 340, 420)); tutorial_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_copy.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_copy)
 	var start := make_button("COMEÇAR CORRIDA", Rect2(70, 600, 344, 66)); start.pressed.connect(start_run); tutorial_panel.add_child(start)
 
 

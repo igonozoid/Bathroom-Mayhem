@@ -8,9 +8,9 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 
 ### `assets/art/characters/luana/v2/`
 
-- Arquivos: `luana_run_contact_v2.png`, `luana_run_passing_v2.png`, `luana_jump_short_v2.png` e `luana_jump_long_v2.png`.
-- Alfa real: sim, verificado em todos os quatro PNGs.
-- Conteúdo: Luana adulta, curvilínea/chubby atlética, com silhueta mais cheia, corrida em duas fases e saltos de baixa/alta extensão separados.
+- Arquivos: `luana_run_contact_v2.png`, `luana_run_recoil_v2.png`, `luana_run_passing_v2.png`, `luana_run_high_knee_v2.png`, `luana_jump_short_v2.png` e `luana_jump_long_v2.png`.
+- Alfa real: sim, verificado em todos os seis PNGs.
+- Conteúdo: Luana adulta, curvilínea/chubby atlética, com silhueta mais cheia, corrida em quatro fases e saltos de baixa/alta extensão separados.
 - Uso: ciclo principal do vertical slice. O pulo prolongado tem arte e física distintas do pulo curto.
 - Geração: ferramenta integrada de imagens; os candidatos com falso xadrez de transparência foram rejeitados e não foram incluídos no jogo.
 

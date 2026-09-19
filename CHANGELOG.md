@@ -69,10 +69,13 @@ Mudanças relevantes no projeto e em sua documentação.
 - quatro sprites V2 transparentes da Luana: dois de corrida, pulo curto e pulo longo.
 - splash, menu principal e tutorial de gestos antes da corrida.
 - parallax de praia em três velocidades e animação visual de turista, cachorro e gaivota.
+- dois quadros adicionais de corrida para ciclo de quatro fases da Luana.
 
 ### Alterado
 
 - pulo curto e prolongado agora usam impulso, sustentação e sprites diferentes.
+- fluxo de PC cobre splash, menu, tutorial, reinício e gameplay com Enter/Espaço, seta para baixo, F e R.
+- força e sustentação de pulo aumentadas para superar obstáculos com margem legível.
 - arquivo histórico do chat 00 organizado em `references/from_chat_00/source_images/`, sem arquivos PNG soltos na raiz.
 
 ### Alterado
