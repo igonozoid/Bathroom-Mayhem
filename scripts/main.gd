@@ -18,10 +18,11 @@ const LUANA_RUN_CONTACT_LEFT := preload("res://assets/art/characters/luana/v2/lu
 const LUANA_RUN_PUSH_OFF := preload("res://assets/art/characters/luana/v2/luana_run_push_off_v2.png")
 const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
 const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
-const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
+const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_stage_v2.png")
 const LOGO := preload("res://assets/art/branding/bathroom_mayhem_logo_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
-const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
+const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_v2.png")
+const TOURIST := preload("res://assets/art/obstacles/tourist_phone_v2.png")
 const PLAYER_RUN_SCALE := 0.095
 const RUN_CYCLE := [LUANA_RUN_CONTACT, LUANA_RUN_RECOIL, LUANA_RUN_PASSING, LUANA_RUN_HIGH_KNEE, LUANA_RUN_EXTENSION, LUANA_RUN_COMPRESSION, LUANA_RUN_CONTACT_LEFT, LUANA_RUN_PUSH_OFF]
 const RUN_SCALES := [0.095, 0.089, 0.095, 0.080, 0.100, 0.083, 0.100, 0.100]
@@ -102,7 +103,7 @@ func build_backdrop() -> void:
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	image.modulate = Color(1, 1, 1, 0.72)
+	image.modulate = Color.WHITE
 	layer.add_child(image)
 	add_child(layer)
 
@@ -287,8 +288,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	draw_parallax()
-	draw_rect(Rect2(0, 638, 540, 322), Color("f8cf82"))
-	draw_rect(Rect2(0, 754, 540, 206), Color("edb96b"))
+	draw_rect(Rect2(0, 744, 540, 216), Color(1.0, 0.82, 0.43, 0.10))
 	var offset := fmod(distance * 0.38, 110.0)
 	for stripe_x in range(-120, 660, 110):
 		draw_line(Vector2(stripe_x - offset, 832), Vector2(stripe_x + 58 - offset, 832), Color(0.74, 0.47, 0.22, 0.25), 3)
@@ -299,22 +299,13 @@ func _draw() -> void:
 
 
 func draw_parallax() -> void:
-	# Three independent speeds make the vertical beach feel like a real scrolling course.
-	var far_shift := fmod(distance * 0.10, 260.0)
-	for x in range(-260, 800, 260):
-		var base := x - far_shift
-		draw_colored_polygon(PackedVector2Array([Vector2(base, 624), Vector2(base + 72, 530), Vector2(base + 152, 624)]), Color(0.18, 0.55, 0.60, 0.24))
-	var mid_shift := fmod(distance * 0.24, 180.0)
+	# The painted stage is the far layer. Small shadows and leaf bands move over it.
+	var shadow_shift := fmod(distance * 0.32, 180.0)
 	for x in range(-180, 720, 180):
-		var base := x - mid_shift
-		draw_line(Vector2(base + 34, 652), Vector2(base + 34, 575), Color(0.25, 0.40, 0.30, 0.70), 7)
-		draw_circle(Vector2(base + 34, 565), 28, Color(0.18, 0.48, 0.33, 0.72))
-		draw_circle(Vector2(base + 15, 577), 19, Color(0.21, 0.56, 0.37, 0.72))
-		draw_circle(Vector2(base + 54, 577), 19, Color(0.21, 0.56, 0.37, 0.72))
-	var near_shift := fmod(distance * 0.55, 135.0)
-	for x in range(-135, 675, 135):
-		var base := x - near_shift
-		draw_arc(Vector2(base + 56, 734), 34, PI, TAU, 18, Color(1, 1, 0.92, 0.52), 3)
+		draw_circle(Vector2(x - shadow_shift + 72, 766), 22, Color(0.31, 0.20, 0.08, 0.10))
+	var leaf_shift := fmod(distance * 0.62, 120.0)
+	for x in range(-120, 660, 120):
+		draw_line(Vector2(x - leaf_shift, 730), Vector2(x + 36 - leaf_shift, 742), Color(0.16, 0.35, 0.19, 0.18), 5)
 
 
 func draw_object(kind: String, p: Vector2) -> void:
@@ -328,7 +319,8 @@ func draw_object(kind: String, p: Vector2) -> void:
 		"low":
 			draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("ef765e")); draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("173c5d"), false, 4); draw_line(p+Vector2(-28,-31),p+Vector2(28,-12),Color("ffe299"),5)
 		"tourist":
-			draw_tourist(p)
+			var tourist_bob := sin(world_time * 5.0 + p.x * 0.02) * 2.0
+			draw_texture_rect(TOURIST, Rect2(p.x - 46, p.y - 112 + tourist_bob, 92, 112), false)
 		"dog":
 			var dog_bob := sin(world_time * 11.0 + p.x * 0.03) * 4.0
 			draw_texture_rect(BEACH_DOG, Rect2(p.x - 58, p.y - 54 + dog_bob, 116, 77), false)
@@ -341,23 +333,6 @@ func draw_object(kind: String, p: Vector2) -> void:
 			draw_line(p+Vector2(-46,68),p+Vector2(-46,-20),Color("72482b"),10); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("ff8c58")); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("173c5d"),false,4); draw_string(ThemeDB.fallback_font,p+Vector2(-31,7),"BAIXE!",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("fff7df"))
 		"toilet":
 			draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("62d2d3")); draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("173c5d"),false,5); draw_rect(Rect2(p.x-32,p.y-88,64,88),Color("fff5dd")); draw_string(ThemeDB.fallback_font,p+Vector2(-29,-98),"WC",HORIZONTAL_ALIGNMENT_LEFT,-1,26,Color("173c5d"))
-
-
-func draw_tourist(p: Vector2) -> void:
-	# Deliberately simple silhouette: readable at mobile scale and distinct from Luana.
-	var outline := Color("173c5d")
-	draw_circle(p + Vector2(-2, -78), 17, Color("f2b279"))
-	draw_arc(p + Vector2(-2, -78), 17, 0, TAU, 18, outline, 3)
-	draw_circle(p + Vector2(-7, -81), 2.5, outline)
-	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), Color("45cbd0"))
-	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), outline, false, 3)
-	draw_circle(p + Vector2(6, -43), 6, Color("fff5d6")); draw_circle(p + Vector2(-10, -33), 5, Color("fff5d6"))
-	var stride := sin(world_time * 6.0 + p.x * 0.02) * 8.0
-	draw_line(p + Vector2(-16, -20), p + Vector2(-26 + stride, -2), outline, 11)
-	draw_line(p + Vector2(15, -20), p + Vector2(27 - stride, -2), outline, 11)
-	draw_line(p + Vector2(-16, -20), p + Vector2(-26 + stride, -2), Color("ef765e"), 6)
-	draw_line(p + Vector2(15, -20), p + Vector2(27 - stride, -2), Color("ef765e"), 6)
-	draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), Color("ffe09b")); draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), outline, false, 2)
 
 
 func build_hud() -> void:

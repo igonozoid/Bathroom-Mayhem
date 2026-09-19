@@ -79,6 +79,7 @@ Mudanças relevantes no projeto e em sua documentação.
 - força e sustentação de pulo aumentadas para superar obstáculos com margem legível.
 - arquivo histórico do chat 00 organizado em `references/from_chat_00/source_images/`, sem arquivos PNG soltos na raiz.
 - versão de APK reclassificada como protótipo técnico, não candidata à publicação, por falta de coesão visual e revisão em tela real.
+- cenário Beach Run V2 e turista V2 integrados para substituir fundo vazio e obstáculo desenhado em código.
 
 ### Alterado
 

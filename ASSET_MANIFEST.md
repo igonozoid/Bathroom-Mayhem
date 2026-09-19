@@ -32,12 +32,26 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 - Conteúdo: gaivota em voo lateral.
 - Uso: obstáculo alto; deve ser evitada com slide.
 
-### `assets/art/obstacles/beach_dog_running_v1.png`
+### `assets/art/obstacles/beach_dog_v2.png`
 
 - Dimensão: 1536 × 1024.
 - Alfa real: sim.
 - Conteúdo: cachorro correndo em perfil lateral.
-- Uso: obstáculo de solo; deve ser evitado com pulo.
+- Uso: obstáculo de solo; deve ser evitado com pulo. Substitui a versão experimental V1 no MVP reconstruído.
+
+### `assets/art/obstacles/tourist_phone_v2.png`
+
+- Dimensão: 1162 × 1354.
+- Alfa real: sim.
+- Conteúdo: turista distraído com celular e bolsa de praia.
+- Uso: substitui o placeholder desenhado em código; obstáculo humano de solo.
+
+### `assets/art/backgrounds/beach_run_stage_v2.png`
+
+- Dimensão: 941 × 1672.
+- Fundo: opaco.
+- Conteúdo: cenário final da fase Beach Run, com torre de salva-vidas, público, quiosque e faixa central livre.
+- Uso: placa de fundo do MVP reconstruído.
 
 ### Turista distraído
 
