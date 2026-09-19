@@ -8,11 +8,14 @@ const GRAVITY := 1750.0
 const JUMP_POWER := -650.0
 const GOAL := 6200.0
 const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
+const LUANA_RUN_CONTACT := preload("res://assets/art/characters/luana/v2/luana_run_contact_v2.png")
+const LUANA_RUN_PASSING := preload("res://assets/art/characters/luana/v2/luana_run_passing_v2.png")
+const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
+const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
 const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
 const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
-const RUN_FRAMES := [Rect2(292, 0, 315, 410), Rect2(607, 0, 315, 410), Rect2(922, 0, 315, 410)]
-const PLAYER_RUN_SCALE := 0.30
+const PLAYER_RUN_SCALE := 0.095
 
 var luana: Sprite2D
 var player_y := GROUND
@@ -22,11 +25,14 @@ var pressure := 16.0
 var dignity := 100
 var paper := 0
 var mayhem := 0
-var state := "running"
+var state := "splash"
 var slide_time := 0.0
 var hold_time := 0.0
 var jump_held := false
 var relief_cooldown := 0.0
+var jump_extended := false
+var world_time := 0.0
+var splash_time := 0.0
 var press_point := Vector2.ZERO
 var press_active := false
 var last_tap := -10.0
@@ -40,17 +46,30 @@ var relief_label: Label
 var result_panel: Panel
 var result_title: Label
 var result_text: Label
+var splash_panel: Panel
+var menu_panel: Panel
+var tutorial_panel: Panel
 
 
 func _ready() -> void:
 	build_backdrop()
 	build_player()
 	build_hud()
+	build_frontend()
 	build_course()
 	queue_redraw()
 	if "--capture-preview" in OS.get_cmdline_user_args() or "--capture-preview" in OS.get_cmdline_args():
 		print("Bathroom Mayhem QA capture requested")
 		capture_preview.call_deferred()
+
+
+func _process(delta: float) -> void:
+	world_time += delta
+	if state == "splash":
+		splash_time += delta
+		if splash_time >= 1.4:
+			show_menu()
+	queue_redraw()
 
 
 func capture_preview() -> void:
@@ -80,10 +99,10 @@ func build_backdrop() -> void:
 
 func build_player() -> void:
 	luana = Sprite2D.new()
-	luana.position = Vector2(PLAYER_X, player_y - 74.0)
+	luana.position = Vector2(PLAYER_X, player_y - 61.0)
 	luana.z_index = 8
 	add_child(luana)
-	set_luana_frame(RUN_FRAMES[0], PLAYER_RUN_SCALE)
+	set_luana_texture(LUANA_RUN_CONTACT, PLAYER_RUN_SCALE)
 
 
 func set_luana_frame(region: Rect2, scale_value: float) -> void:
@@ -91,6 +110,11 @@ func set_luana_frame(region: Rect2, scale_value: float) -> void:
 	atlas.atlas = SHEET
 	atlas.region = region
 	luana.texture = atlas
+	luana.scale = Vector2.ONE * scale_value
+
+
+func set_luana_texture(texture: Texture2D, scale_value: float) -> void:
+	luana.texture = texture
 	luana.scale = Vector2.ONE * scale_value
 
 
@@ -110,7 +134,8 @@ func _physics_process(delta: float) -> void:
 		jump()
 	if Input.is_action_pressed("jump") and jump_held and hold_time < 0.18 and velocity_y < 0:
 		hold_time += delta
-		velocity_y = minf(velocity_y, -920.0)
+		velocity_y -= 780.0 * delta
+		jump_extended = jump_extended or hold_time >= 0.06
 	if Input.is_action_just_released("jump"):
 		jump_held = false
 	if Input.is_action_just_pressed("slide"):
@@ -131,15 +156,15 @@ func _physics_process(delta: float) -> void:
 
 
 func update_luana() -> void:
-	luana.position = Vector2(PLAYER_X, player_y - (48.0 if sliding() else 74.0))
+	luana.position = Vector2(PLAYER_X, player_y - (48.0 if sliding() else 61.0))
 	if sliding():
 		set_luana_frame(Rect2(932, 410, 310, 392), 0.27)
 	elif player_y < GROUND - 8:
-		set_luana_frame(Rect2(0, 410, 318, 410), 0.29)
+		set_luana_texture(LUANA_JUMP_LONG if jump_extended else LUANA_JUMP_SHORT, PLAYER_RUN_SCALE)
 	elif pressure >= 72:
 		set_luana_frame(Rect2(320, 820, 315, 405), 0.29)
 	else:
-		set_luana_frame(RUN_FRAMES[int(distance / 78.0) % RUN_FRAMES.size()], PLAYER_RUN_SCALE)
+		set_luana_texture(LUANA_RUN_CONTACT if int(distance / 58.0) % 2 == 0 else LUANA_RUN_PASSING, PLAYER_RUN_SCALE)
 
 
 func sliding() -> bool:
@@ -148,8 +173,9 @@ func sliding() -> bool:
 
 func jump() -> void:
 	if player_y >= GROUND - 1 and not sliding():
-		velocity_y = JUMP_POWER
+		velocity_y = JUMP_POWER * 0.84
 		hold_time = 0
+		jump_extended = false
 		jump_held = true
 		show_event("PULO!", Color("dffcff"))
 
@@ -210,9 +236,13 @@ func check_course() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_R and state in ["won", "lost"]:
+		get_tree().reload_current_scene()
+		return
+	if state != "running":
+		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			if state != "running": get_tree().reload_current_scene(); return
 			var now := Time.get_ticks_msec() / 1000.0
 			if now - last_tap <= 0.28:
 				relief(); last_tap = -10; press_active = false; return
@@ -223,7 +253,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		press_active = false; jump_held = false; slide()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			if state != "running": get_tree().reload_current_scene(); return
 			press_active = true; press_point = event.position; jump()
 		else:
 			press_active = false; jump_held = false
@@ -232,6 +261,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
+	draw_parallax()
 	draw_rect(Rect2(0, 638, 540, 322), Color("f8cf82"))
 	draw_rect(Rect2(0, 754, 540, 206), Color("edb96b"))
 	var offset := fmod(distance * 0.38, 110.0)
@@ -241,6 +271,25 @@ func _draw() -> void:
 		if not item.used:
 			var x: float = item.x - distance + PLAYER_X
 			if x > -120 and x < 660: draw_object(item.kind, Vector2(x, item.y))
+
+
+func draw_parallax() -> void:
+	# Three independent speeds make the vertical beach feel like a real scrolling course.
+	var far_shift := fmod(distance * 0.10, 260.0)
+	for x in range(-260, 800, 260):
+		var base := x - far_shift
+		draw_colored_polygon(PackedVector2Array([Vector2(base, 624), Vector2(base + 72, 530), Vector2(base + 152, 624)]), Color(0.18, 0.55, 0.60, 0.24))
+	var mid_shift := fmod(distance * 0.24, 180.0)
+	for x in range(-180, 720, 180):
+		var base := x - mid_shift
+		draw_line(Vector2(base + 34, 652), Vector2(base + 34, 575), Color(0.25, 0.40, 0.30, 0.70), 7)
+		draw_circle(Vector2(base + 34, 565), 28, Color(0.18, 0.48, 0.33, 0.72))
+		draw_circle(Vector2(base + 15, 577), 19, Color(0.21, 0.56, 0.37, 0.72))
+		draw_circle(Vector2(base + 54, 577), 19, Color(0.21, 0.56, 0.37, 0.72))
+	var near_shift := fmod(distance * 0.55, 135.0)
+	for x in range(-135, 675, 135):
+		var base := x - near_shift
+		draw_arc(Vector2(base + 56, 734), 34, PI, TAU, 18, Color(1, 1, 0.92, 0.52), 3)
 
 
 func draw_object(kind: String, p: Vector2) -> void:
@@ -256,9 +305,13 @@ func draw_object(kind: String, p: Vector2) -> void:
 		"tourist":
 			draw_tourist(p)
 		"dog":
-			draw_texture_rect(BEACH_DOG, Rect2(p.x - 58, p.y - 54, 116, 77), false)
+			var dog_bob := sin(world_time * 11.0 + p.x * 0.03) * 4.0
+			draw_texture_rect(BEACH_DOG, Rect2(p.x - 58, p.y - 54 + dog_bob, 116, 77), false)
 		"seagull":
-			draw_texture_rect(SEAGULL, Rect2(p.x - 58, p.y - 39, 116, 77), false)
+			var bird_bob := sin(world_time * 7.0 + p.x * 0.02) * 7.0
+			draw_texture_rect(SEAGULL, Rect2(p.x - 58, p.y - 39 + bird_bob, 116, 77), false)
+			var wing_lift := absf(sin(world_time * 8.0 + p.x * 0.02)) * 13.0
+			draw_line(Vector2(p.x + 4, p.y - 18 + bird_bob), Vector2(p.x + 31, p.y - 38 - wing_lift + bird_bob), Color("173c5d"), 3)
 		"high":
 			draw_line(p+Vector2(-46,68),p+Vector2(-46,-20),Color("72482b"),10); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("ff8c58")); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("173c5d"),false,4); draw_string(ThemeDB.fallback_font,p+Vector2(-31,7),"BAIXE!",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("fff7df"))
 		"toilet":
@@ -274,10 +327,11 @@ func draw_tourist(p: Vector2) -> void:
 	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), Color("45cbd0"))
 	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), outline, false, 3)
 	draw_circle(p + Vector2(6, -43), 6, Color("fff5d6")); draw_circle(p + Vector2(-10, -33), 5, Color("fff5d6"))
-	draw_line(p + Vector2(-16, -20), p + Vector2(-26, -2), outline, 11)
-	draw_line(p + Vector2(15, -20), p + Vector2(27, -2), outline, 11)
-	draw_line(p + Vector2(-16, -20), p + Vector2(-26, -2), Color("ef765e"), 6)
-	draw_line(p + Vector2(15, -20), p + Vector2(27, -2), Color("ef765e"), 6)
+	var stride := sin(world_time * 6.0 + p.x * 0.02) * 8.0
+	draw_line(p + Vector2(-16, -20), p + Vector2(-26 + stride, -2), outline, 11)
+	draw_line(p + Vector2(15, -20), p + Vector2(27 - stride, -2), outline, 11)
+	draw_line(p + Vector2(-16, -20), p + Vector2(-26 + stride, -2), Color("ef765e"), 6)
+	draw_line(p + Vector2(15, -20), p + Vector2(27 - stride, -2), Color("ef765e"), 6)
 	draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), Color("ffe09b")); draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), outline, false, 2)
 
 
@@ -299,6 +353,47 @@ func build_hud() -> void:
 	result_panel=make_panel(Rect2(50,327,440,306),Color("102c46"),30); result_panel.visible=false; root.add_child(result_panel)
 	result_title=label("",30,Color("fff0bd"),Rect2(70,365,400,48)); result_title.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(result_title)
 	result_text=label("",18,Color.WHITE,Rect2(84,433,372,150)); result_text.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; result_text.vertical_alignment=VERTICAL_ALIGNMENT_CENTER; root.add_child(result_text)
+
+
+func build_frontend() -> void:
+	var layer := CanvasLayer.new(); layer.layer = 10; add_child(layer)
+	var root := Control.new(); root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); layer.add_child(root)
+	splash_panel = make_panel(Rect2(0, 0, 540, 960), Color("102c46"), 0); splash_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(splash_panel)
+	var splash_title := label("BATHROOM\nMAYHEM", 48, Color("fff0bd"), Rect2(45, 275, 450, 132)); splash_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_title)
+	var splash_sub := label("FULL PRESSURE", 21, Color("68e2da"), Rect2(45, 420, 450, 32)); splash_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_sub)
+	var splash_wait := label("CARREGANDO A EMERGÊNCIA...", 16, Color("fff5d6"), Rect2(45, 730, 450, 28)); splash_wait.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; splash_panel.add_child(splash_wait)
+
+	menu_panel = make_panel(Rect2(28, 120, 484, 700), Color("102c46"), 28); menu_panel.visible = false; menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(menu_panel)
+	var menu_title := label("BATHROOM MAYHEM", 32, Color("fff0bd"), Rect2(24, 70, 436, 54)); menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_title)
+	var menu_sub := label("FULL PRESSURE\nChegue ao banheiro antes do desastre.", 18, Color("b9f8f3"), Rect2(38, 145, 408, 65)); menu_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_sub.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_sub)
+	var play := make_button("CORRER!", Rect2(70, 288, 344, 70)); play.pressed.connect(show_tutorial); menu_panel.add_child(play)
+	var how := make_button("COMO JOGAR", Rect2(70, 380, 344, 58)); how.pressed.connect(show_tutorial); menu_panel.add_child(how)
+	var menu_note := label("Versão de teste • toque com uma mão", 15, Color("ffe09b"), Rect2(30, 570, 424, 30)); menu_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; menu_panel.add_child(menu_note)
+
+	tutorial_panel = make_panel(Rect2(28, 100, 484, 740), Color("102c46"), 28); tutorial_panel.visible = false; tutorial_panel.mouse_filter = Control.MOUSE_FILTER_STOP; root.add_child(tutorial_panel)
+	var tutorial_title := label("COMO JOGAR", 30, Color("fff0bd"), Rect2(24, 48, 436, 46)); tutorial_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_title)
+	var tutorial_copy := label("TOQUE\nPulo curto\n\nSEGURE\nPulo alto\n\nSWIPE ↓\nDeslize sob a gaivota\n\nTOQUE DUPLO\nControlled Relief", 19, Color("f5fbff"), Rect2(72, 122, 340, 390)); tutorial_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER; tutorial_copy.vertical_alignment = VERTICAL_ALIGNMENT_CENTER; tutorial_panel.add_child(tutorial_copy)
+	var start := make_button("COMEÇAR CORRIDA", Rect2(70, 600, 344, 66)); start.pressed.connect(start_run); tutorial_panel.add_child(start)
+
+
+func make_button(value: String, rect: Rect2) -> Button:
+	var node := Button.new(); node.text = value; node.position = rect.position; node.size = rect.size; node.add_theme_font_size_override("font_size", 20); node.add_theme_color_override("font_color", Color("102c46"))
+	var normal := StyleBoxFlat.new(); normal.bg_color = Color("68e2da"); normal.corner_radius_top_left = 16; normal.corner_radius_top_right = 16; normal.corner_radius_bottom_left = 16; normal.corner_radius_bottom_right = 16
+	var pressed := StyleBoxFlat.new(); pressed.bg_color = Color("fff0bd"); pressed.corner_radius_top_left = 16; pressed.corner_radius_top_right = 16; pressed.corner_radius_bottom_left = 16; pressed.corner_radius_bottom_right = 16
+	node.add_theme_stylebox_override("normal", normal); node.add_theme_stylebox_override("pressed", pressed); return node
+
+
+func show_menu() -> void:
+	state = "menu"; splash_panel.visible = false; menu_panel.visible = true; tutorial_panel.visible = false
+
+
+func show_tutorial() -> void:
+	state = "tutorial"; splash_panel.visible = false; menu_panel.visible = false; tutorial_panel.visible = true
+
+
+func start_run() -> void:
+	state = "running"; tutorial_panel.visible = false; result_panel.visible = false
+	distance = 0.0; pressure = 16.0; dignity = 100; paper = 0; mayhem = 0; player_y = GROUND; velocity_y = 0.0; course.clear(); build_course(); show_event("CORRA, LUANA!", Color("dffcff"))
 
 
 func make_panel(rect: Rect2, color: Color, radius: int) -> Panel:

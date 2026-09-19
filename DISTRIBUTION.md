@@ -96,6 +96,6 @@ Página Draft criada em: `https://igonoz.itch.io/bathroom-mayhem-full-pressure`.
 
 - Arquivo: `builds/android/BathroomMayhem-test.apk` (arquivo local ignorado pelo Git).
 - Data: 2026-09-19.
-- SHA-256: `cb39f1d9a7cd2c76488904f3600d33515bb876f57b5788cdc0aac033f39a142a`.
-- Conteúdo: auto-runner vertical com Luana menor, turista, cachorro e gaivota.
+- SHA-256: `80e5c06661e5bcee9ba55d2db379d906df3539557d0593d4b580ea51db1bb968`.
+- Conteúdo: auto-runner vertical com Luana V2, saltos distintos, telas de entrada, parallax, turista, cachorro e gaivota.
 - Estado: exportado e assinado pelo fluxo de debug do Godot; requer o próximo teste em aparelho físico.

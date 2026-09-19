@@ -20,6 +20,9 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P0** Configurar `.gitignore` para Godot.
 - [x] **P0** Construir uma base vertical jogável com sprites iniciais.
 - [x] **P0** Substituir a pista abstrata por obstáculos de humano, ave e animal.
+- [x] **P0** Criar splash, menu e tutorial jogáveis antes da corrida.
+- [x] **P0** Diferenciar pulo curto e pulo prolongado em física e sprite.
+- [x] **P1** Adicionar parallax multicamada e animação de leitura dos obstáculos.
 
 ## Próximas
 
@@ -43,7 +46,7 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P1** Criar logo, ícone do aplicativo e atlas de HUD.
 - [x] **P1** Criar fundo vertical inicial de Beach Run.
 - [x] **P1** Criar atlas inicial de efeitos de gameplay.
-- [ ] **P1** Produzir um ciclo definitivo da Luana em células regulares e com transparência verificada.
+- [x] **P1** Produzir um ciclo inicial da Luana com transparência verificada e saltos distintos.
 - [x] **P1** Reduzir a ocupação visual da Luana para ampliar a leitura do percurso.
 - [ ] **P1** Fazer ao menos uma rodada de playtest externo.
 - [ ] **P1** Registrar métricas simples de balanceamento durante os testes.

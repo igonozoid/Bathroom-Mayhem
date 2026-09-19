@@ -26,6 +26,8 @@ O conteúdo recuperado automaticamente está em [`archive/`](archive/README.md).
 
 ## Importação manual de 2026-09-19
 
-As 45 imagens salvas manualmente a partir do chat foram revisadas sem alterar os originais. A classificação completa, incluindo contradições, duplicatas e indicação do que realmente pode orientar o MVP, está em [`IMAGE_CATALOG.md`](IMAGE_CATALOG.md).
+As 45 imagens salvas manualmente a partir do chat foram revisadas e movidas, sem exclusão ou conversão, para [`source_images/`](source_images/). Os nomes agora descrevem o assunto, o personagem e o horário original; a classificação completa, incluindo contradições, duplicatas e indicação do que realmente pode orientar o MVP, está em [`IMAGE_CATALOG.md`](IMAGE_CATALOG.md).
+
+As pranchas já promovidas para `characters/` continuam intocadas. `source_images/` é o lote histórico integral e não é importado pelo Godot.
 
 Resumo: 44 conteúdos únicos, uma duplicata exata, duas versões incorretas de Rebecca, uma versão intermediária de Aurora substituída por Nina e várias cenas coletivas úteis somente como referência narrativa.

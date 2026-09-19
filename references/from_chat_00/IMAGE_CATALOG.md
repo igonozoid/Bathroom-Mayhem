@@ -4,7 +4,7 @@ Revisado em: 2026-09-19
 
 ## Como ler este catálogo
 
-Este documento classifica as 45 imagens adicionadas manualmente na raiz desta pasta. Os arquivos originais não foram movidos, renomeados, convertidos nem apagados.
+Este documento classifica as 45 imagens adicionadas manualmente. Elas foram preservadas em `source_images/`, agrupadas por assunto e personagem e renomeadas de forma descritiva; o sufixo de horário original foi mantido para cruzamento com esta tabela. Nenhuma imagem foi apagada ou convertida.
 
 - **Cânone visual**: pode orientar novas artes, respeitando as ressalvas registradas.
 - **Conceito aprovado**: define bem composição, linguagem ou UX, mas não é asset recortável.
@@ -106,3 +106,4 @@ Para o APK de teste, somente estas referências devem guiar produção agora:
 - 1 duplicata exata: `01_02_47` = `01_03_12` (`9d298a6ff570…`);
 - nenhum original removido;
 - as referências permanecem fora da importação do Godot por causa de `references/.gdignore`.
+- não há mais PNGs soltos na raiz de `from_chat_00/`.

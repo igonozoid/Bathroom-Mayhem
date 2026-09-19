@@ -66,6 +66,14 @@ Mudanças relevantes no projeto e em sua documentação.
 - obstáculos de gameplay com leitura própria: turista distraído (pulo), cachorro (pulo) e gaivota (slide).
 - sprites transparentes de cachorro e gaivota integrados em `assets/art/obstacles/`.
 - APK ARM64 de teste renovado em `builds/android/BathroomMayhem-test.apk` após a revisão visual.
+- quatro sprites V2 transparentes da Luana: dois de corrida, pulo curto e pulo longo.
+- splash, menu principal e tutorial de gestos antes da corrida.
+- parallax de praia em três velocidades e animação visual de turista, cachorro e gaivota.
+
+### Alterado
+
+- pulo curto e prolongado agora usam impulso, sustentação e sprites diferentes.
+- arquivo histórico do chat 00 organizado em `references/from_chat_00/source_images/`, sem arquivos PNG soltos na raiz.
 
 ### Alterado
 
