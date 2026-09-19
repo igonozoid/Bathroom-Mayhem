@@ -51,7 +51,15 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 - Dimensão: 941 × 1672.
 - Fundo: opaco.
 - Conteúdo: cenário final da fase Beach Run, com torre de salva-vidas, público, quiosque e faixa central livre.
-- Uso: placa de fundo do MVP reconstruído.
+- Uso: composição vertical anterior, preservada como referência. Não é mais usada no runtime.
+
+### `assets/art/backgrounds/beach_run_panorama_v3.png`
+
+- Dimensão: 2172 × 724.
+- Fundo: opaco.
+- Conteúdo: panorama lateral de praia com torre de salva-vidas, oceano, montanhas, público, quiosque, palmeiras e faixa inferior de areia livre.
+- Uso: fundo ativo da rota. A câmera percorre o panorama ao longo da corrida, em vez de manter uma placa fixa.
+- Geração: ferramenta integrada de imagens, usando o painel B do mockup histórico exclusivamente como referência de direção, composição e paleta; sem reproduzir UI, texto ou personagem da referência.
 
 ### Turista distraído
 

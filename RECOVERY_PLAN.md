@@ -17,7 +17,8 @@ Ele não é candidato a publicação e não deve ser enviado ao itch.io.
 - obstáculos e itens introduzidos progressivamente;
 - HUD, pausa, tutorial, falha e sucesso com a mesma linguagem visual;
 - menu usa o logo oficial, não tipografia provisória;
-- arte de Luana só permanece se o ciclo for visualmente coerente em movimento.
+- arte de Luana só permanece se o ciclo for visualmente coerente em movimento;
+- a rota usa panorama lateral percorrido por câmera, com primeiro plano independente; nenhum fundo vertical único pode representar a fase inteira.
 
 ## Cortes
 

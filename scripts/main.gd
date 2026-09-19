@@ -18,7 +18,7 @@ const LUANA_RUN_CONTACT_LEFT := preload("res://assets/art/characters/luana/v2/lu
 const LUANA_RUN_PUSH_OFF := preload("res://assets/art/characters/luana/v2/luana_run_push_off_v2.png")
 const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
 const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
-const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_stage_v2.png")
+const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_panorama_v3.png")
 const LOGO := preload("res://assets/art/branding/bathroom_mayhem_logo_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
 const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_v2.png")
@@ -60,6 +60,7 @@ var splash_panel: Panel
 var menu_panel: Panel
 var tutorial_panel: Panel
 var stage_label: Label
+var backdrop: TextureRect
 
 
 func _ready() -> void:
@@ -76,6 +77,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	world_time += delta
+	update_backdrop_camera()
 	if state == "splash":
 		splash_time += delta
 		if splash_time >= 1.4:
@@ -101,15 +103,24 @@ func capture_preview() -> void:
 
 func build_backdrop() -> void:
 	var layer := CanvasLayer.new()
-	layer.layer = -1
-	var image := TextureRect.new()
-	image.texture = BACKGROUND
-	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	image.modulate = Color.WHITE
-	layer.add_child(image)
+	layer.layer = -2
+	backdrop = TextureRect.new()
+	backdrop.texture = BACKGROUND
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	# The source is a long, single side-scrolling world. It is wider than the
+	# viewport so the world advances behind Luana instead of sitting as a poster.
+	backdrop.position = Vector2.ZERO
+	backdrop.size = Vector2(2880, 960)
+	layer.add_child(backdrop)
 	add_child(layer)
+
+
+func update_backdrop_camera() -> void:
+	if not backdrop:
+		return
+	var travel_limit := backdrop.size.x - SIZE.x
+	backdrop.position.x = -minf(distance * 0.12, travel_limit)
 
 
 func build_player() -> void:
@@ -303,13 +314,25 @@ func _draw() -> void:
 
 
 func draw_parallax() -> void:
-	# The painted stage is the far layer. Small shadows and leaf bands move over it.
-	var shadow_shift := fmod(distance * 0.32, 180.0)
-	for x in range(-180, 720, 180):
-		draw_circle(Vector2(x - shadow_shift + 72, 766), 22, Color(0.31, 0.20, 0.08, 0.10))
-	var leaf_shift := fmod(distance * 0.62, 120.0)
-	for x in range(-120, 660, 120):
-		draw_line(Vector2(x - leaf_shift, 730), Vector2(x + 36 - leaf_shift, 742), Color(0.16, 0.35, 0.19, 0.18), 5)
+	# The panorama carries the distant scenery. These foreground passes move
+	# faster, giving the route depth without obscuring the play lane.
+	var shadow_shift := fmod(distance * 0.74, 210.0)
+	for x in range(-210, 750, 210):
+		draw_shadow_ellipse(Vector2(x - shadow_shift + 90, 775), 40, 12, Color(0.23, 0.14, 0.05, 0.14))
+	var wind_shift := fmod(distance * 0.58 + world_time * 14.0, 150.0)
+	for x in range(-150, 690, 150):
+		draw_line(Vector2(x - wind_shift, 733), Vector2(x + 48 - wind_shift, 742), Color(0.93, 0.72, 0.32, 0.36), 3)
+	var foam_shift := fmod(distance * 0.20 + world_time * 20.0, 96.0)
+	for x in range(-96, 636, 96):
+		draw_arc(Vector2(x - foam_shift, 503), 26, 0.15, 2.8, 12, Color(0.90, 0.98, 1.0, 0.48), 2)
+
+
+func draw_shadow_ellipse(center: Vector2, radius_x: float, radius_y: float, color: Color) -> void:
+	var points := PackedVector2Array()
+	for index in range(18):
+		var angle := TAU * float(index) / 18.0
+		points.append(center + Vector2(cos(angle) * radius_x, sin(angle) * radius_y))
+	draw_colored_polygon(points, color)
 
 
 func draw_object(kind: String, p: Vector2) -> void:
