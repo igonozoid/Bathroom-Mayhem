@@ -24,6 +24,8 @@ Ele não é candidato a publicação e não deve ser enviado ao itch.io.
 
 Até o teste visual dessa fase, ficam congelados: novos personagens jogáveis, novas mecânicas, múltiplas fases e conteúdo de publicação.
 
+O desenvolvimento de gameplay fica também congelado até o pacote definido em `ART_PIPELINE_RESET.md` existir e ser revisado como composição única.
+
 ## Portão de retomada
 
 Só avançamos para uma APK candidata após uma partida observada em janela ou aparelho, com feedback explícito para: animação, leitura de obstáculos, HUD, menu e ritmo dos quatro trechos.
