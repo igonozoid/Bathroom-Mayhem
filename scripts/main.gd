@@ -2,13 +2,17 @@ extends Node2D
 
 const SIZE := Vector2(540, 960)
 const GROUND := 792.0
-const PLAYER_X := 135.0
+const PLAYER_X := 112.0
 const SPEED := 275.0
 const GRAVITY := 1750.0
 const JUMP_POWER := -650.0
 const GOAL := 6200.0
 const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
 const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
+const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
+const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
+const RUN_FRAMES := [Rect2(292, 0, 315, 410), Rect2(607, 0, 315, 410), Rect2(922, 0, 315, 410)]
+const PLAYER_RUN_SCALE := 0.30
 
 var luana: Sprite2D
 var player_y := GROUND
@@ -76,10 +80,10 @@ func build_backdrop() -> void:
 
 func build_player() -> void:
 	luana = Sprite2D.new()
-	luana.position = Vector2(PLAYER_X, player_y - 108.0)
+	luana.position = Vector2(PLAYER_X, player_y - 74.0)
 	luana.z_index = 8
 	add_child(luana)
-	set_luana_frame(Rect2(292, 0, 315, 410), 0.43)
+	set_luana_frame(RUN_FRAMES[0], PLAYER_RUN_SCALE)
 
 
 func set_luana_frame(region: Rect2, scale_value: float) -> void:
@@ -91,7 +95,7 @@ func set_luana_frame(region: Rect2, scale_value: float) -> void:
 
 
 func build_course() -> void:
-	for spec in [[650.0,"paper",705.0],[975.0,"low",742.0],[1210.0,"water",700.0],[1490.0,"high",650.0],[1790.0,"paper",705.0],[2080.0,"low",742.0],[2390.0,"coffee",700.0],[2690.0,"high",650.0],[3020.0,"paper",705.0],[3350.0,"low",742.0],[3640.0,"water",700.0],[3950.0,"high",650.0],[4280.0,"paper",705.0],[4560.0,"low",742.0],[4880.0,"paper",705.0],[5200.0,"high",650.0],[5520.0,"water",700.0],[GOAL,"toilet",676.0]]:
+	for spec in [[650.0,"paper",705.0],[975.0,"tourist",792.0],[1210.0,"water",700.0],[1490.0,"seagull",720.0],[1790.0,"paper",705.0],[2080.0,"dog",792.0],[2390.0,"coffee",700.0],[2690.0,"seagull",720.0],[3020.0,"paper",705.0],[3350.0,"tourist",792.0],[3640.0,"water",700.0],[3950.0,"dog",792.0],[4280.0,"paper",705.0],[4560.0,"seagull",720.0],[4880.0,"paper",705.0],[5200.0,"tourist",792.0],[5520.0,"water",700.0],[GOAL,"toilet",676.0]]:
 		course.append({"x": spec[0], "kind": spec[1], "y": spec[2], "used": false})
 
 
@@ -127,15 +131,15 @@ func _physics_process(delta: float) -> void:
 
 
 func update_luana() -> void:
-	luana.position = Vector2(PLAYER_X, player_y - (62.0 if sliding() else 108.0))
+	luana.position = Vector2(PLAYER_X, player_y - (48.0 if sliding() else 74.0))
 	if sliding():
-		set_luana_frame(Rect2(932, 410, 310, 392), 0.38)
+		set_luana_frame(Rect2(932, 410, 310, 392), 0.27)
 	elif player_y < GROUND - 8:
-		set_luana_frame(Rect2(0, 410, 318, 410), 0.42)
+		set_luana_frame(Rect2(0, 410, 318, 410), 0.29)
 	elif pressure >= 72:
-		set_luana_frame(Rect2(320, 820, 315, 405), 0.42)
+		set_luana_frame(Rect2(320, 820, 315, 405), 0.29)
 	else:
-		set_luana_frame(Rect2(292 + (int(distance / 115.0) % 3) * 315, 0, 315, 410), 0.43)
+		set_luana_frame(RUN_FRAMES[int(distance / 78.0) % RUN_FRAMES.size()], PLAYER_RUN_SCALE)
 
 
 func sliding() -> bool:
@@ -168,15 +172,15 @@ func relief() -> void:
 
 
 func player_box() -> Rect2:
-	return Rect2(PLAYER_X - 36, GROUND - 46, 76, 42) if sliding() else Rect2(PLAYER_X - 32, player_y - 118, 66, 108)
+	return Rect2(PLAYER_X - 31, GROUND - 38, 63, 35) if sliding() else Rect2(PLAYER_X - 27, player_y - 82, 55, 78)
 
 
 func object_box(kind: String, x: float, y: float) -> Rect2:
 	if kind in ["paper", "water", "coffee"]:
 		return Rect2(x - 25, y - 25, 50, 50)
-	if kind == "low":
+	if kind in ["low", "tourist", "dog"]:
 		return Rect2(x - 35, y - 40, 70, 45)
-	if kind == "high":
+	if kind in ["high", "seagull"]:
 		return Rect2(x - 45, y - 15, 90, 36)
 	return Rect2(x - 42, y - 95, 84, 105)
 
@@ -197,10 +201,10 @@ func check_course() -> void:
 				item.used = true; pressure = maxf(0, pressure - 12); show_event("ÁGUA DE COCO  •  PRESSURE -12", Color("a5f5ff"))
 			"coffee":
 				item.used = true; pressure = minf(100, pressure + 14); mayhem += 2; show_event("CAFÉ! PÉSSIMA IDEIA", Color("ffb871"))
-			"low":
+			"low", "tourist", "dog":
 				finish(false, "TROMBOU NO CAOS DA PRAIA!")
-			"high":
-				if not sliding(): finish(false, "A PLACA PEGOU VOCÊ!")
+			"high", "seagull":
+				if not sliding(): finish(false, "A GAIVOTA PEGOU VOCÊ!")
 			"toilet":
 				finish(true, "CHEGOU AO SANTO TRONO!")
 
@@ -249,10 +253,32 @@ func draw_object(kind: String, p: Vector2) -> void:
 			draw_circle(p, 24, Color("7a3f29")); draw_circle(p, 14, Color("241510")); draw_arc(p + Vector2(24,0), 12, -1.2, 1.2, 14, Color("fff1d0"), 5)
 		"low":
 			draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("ef765e")); draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("173c5d"), false, 4); draw_line(p+Vector2(-28,-31),p+Vector2(28,-12),Color("ffe299"),5)
+		"tourist":
+			draw_tourist(p)
+		"dog":
+			draw_texture_rect(BEACH_DOG, Rect2(p.x - 58, p.y - 54, 116, 77), false)
+		"seagull":
+			draw_texture_rect(SEAGULL, Rect2(p.x - 58, p.y - 39, 116, 77), false)
 		"high":
 			draw_line(p+Vector2(-46,68),p+Vector2(-46,-20),Color("72482b"),10); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("ff8c58")); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("173c5d"),false,4); draw_string(ThemeDB.fallback_font,p+Vector2(-31,7),"BAIXE!",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("fff7df"))
 		"toilet":
 			draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("62d2d3")); draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("173c5d"),false,5); draw_rect(Rect2(p.x-32,p.y-88,64,88),Color("fff5dd")); draw_string(ThemeDB.fallback_font,p+Vector2(-29,-98),"WC",HORIZONTAL_ALIGNMENT_LEFT,-1,26,Color("173c5d"))
+
+
+func draw_tourist(p: Vector2) -> void:
+	# Deliberately simple silhouette: readable at mobile scale and distinct from Luana.
+	var outline := Color("173c5d")
+	draw_circle(p + Vector2(-2, -78), 17, Color("f2b279"))
+	draw_arc(p + Vector2(-2, -78), 17, 0, TAU, 18, outline, 3)
+	draw_circle(p + Vector2(-7, -81), 2.5, outline)
+	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), Color("45cbd0"))
+	draw_rect(Rect2(p.x - 25, p.y - 61, 50, 42), outline, false, 3)
+	draw_circle(p + Vector2(6, -43), 6, Color("fff5d6")); draw_circle(p + Vector2(-10, -33), 5, Color("fff5d6"))
+	draw_line(p + Vector2(-16, -20), p + Vector2(-26, -2), outline, 11)
+	draw_line(p + Vector2(15, -20), p + Vector2(27, -2), outline, 11)
+	draw_line(p + Vector2(-16, -20), p + Vector2(-26, -2), Color("ef765e"), 6)
+	draw_line(p + Vector2(15, -20), p + Vector2(27, -2), Color("ef765e"), 6)
+	draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), Color("ffe09b")); draw_rect(Rect2(p.x + 22, p.y - 55, 15, 26), outline, false, 2)
 
 
 func build_hud() -> void:

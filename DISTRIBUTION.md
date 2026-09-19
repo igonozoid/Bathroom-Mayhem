@@ -92,3 +92,10 @@ Página Draft criada em: `https://igonoz.itch.io/bathroom-mayhem-full-pressure`.
 - [ ] Toque reinicia a partida.
 - [ ] Fechar e reabrir o aplicativo funciona.
 - [ ] Desempenho permanece estável por cinco partidas.
+# Build atual de teste
+
+- Arquivo: `builds/android/BathroomMayhem-test.apk` (arquivo local ignorado pelo Git).
+- Data: 2026-09-19.
+- SHA-256: `cb39f1d9a7cd2c76488904f3600d33515bb876f57b5788cdc0aac033f39a142a`.
+- Conteúdo: auto-runner vertical com Luana menor, turista, cachorro e gaivota.
+- Estado: exportado e assinado pelo fluxo de debug do Godot; requer o próximo teste em aparelho físico.

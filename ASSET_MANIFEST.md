@@ -15,6 +15,28 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 - Observação: requer normalização de células/ciclos antes de animação final.
 - Prompt resumido: Luana adulta canônica convertida em cartoon 2D lateral, corpo curvilíneo preservado, roupa esportiva branca/turquesa, poses de idle, corrida, salto, aterrissagem e pressão, contorno azul-marinho e fundo transparente.
 
+## Obstáculos
+
+### `assets/art/obstacles/seagull_flying_v1.png`
+
+- Dimensão: 1536 × 1024.
+- Alfa real: sim.
+- Conteúdo: gaivota em voo lateral.
+- Uso: obstáculo alto; deve ser evitada com slide.
+
+### `assets/art/obstacles/beach_dog_running_v1.png`
+
+- Dimensão: 1536 × 1024.
+- Alfa real: sim.
+- Conteúdo: cachorro correndo em perfil lateral.
+- Uso: obstáculo de solo; deve ser evitado com pulo.
+
+### Turista distraído
+
+- Estado: desenhado em código na cena inicial, com silhueta, celular e bolsa de praia.
+- Uso: obstáculo humano de solo; deve ser evitado com pulo.
+- Motivo: os rascunhos gerados para este personagem vieram com o xadrez de transparência gravado na imagem e foram rejeitados para integração.
+
 ## Cenário
 
 ### `assets/art/environment/beach_tiles_props_v1.png`

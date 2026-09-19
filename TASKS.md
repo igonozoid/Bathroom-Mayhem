@@ -19,6 +19,7 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P0** Inicializar Git local na branch `main` e configurar Git LFS.
 - [x] **P0** Configurar `.gitignore` para Godot.
 - [x] **P0** Construir uma base vertical jogável com sprites iniciais.
+- [x] **P0** Substituir a pista abstrata por obstáculos de humano, ave e animal.
 
 ## Próximas
 
@@ -42,7 +43,8 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P1** Criar logo, ícone do aplicativo e atlas de HUD.
 - [x] **P1** Criar fundo vertical inicial de Beach Run.
 - [x] **P1** Criar atlas inicial de efeitos de gameplay.
-- [ ] **P1** Normalizar e recortar ciclos definitivos da Luana.
+- [ ] **P1** Produzir um ciclo definitivo da Luana em células regulares e com transparência verificada.
+- [x] **P1** Reduzir a ocupação visual da Luana para ampliar a leitura do percurso.
 - [ ] **P1** Fazer ao menos uma rodada de playtest externo.
 - [ ] **P1** Registrar métricas simples de balanceamento durante os testes.
 - [ ] **P2** Adicionar variedade ou conteúdo extra.

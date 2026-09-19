@@ -42,6 +42,8 @@ Mudanças relevantes no projeto e em sua documentação.
 - controles canônicos registrados: tap, hold, swipe down e duplo toque.
 - cena principal reconstruída como auto-runner lateral em retrato; joystick e movimento livre removidos do código.
 - loop inicial de Pressure, pulo variável, slide, Controlled Relief, coleta, falha, sucesso e reinício implementado.
+- escala de Luana reduzida e caixas de colisão recalibradas para abrir a visão frontal em retrato.
+- ciclo terrestre limitado a três poses coerentes da folha com alfa real, removendo os recortes instáveis.
 
 ### Adicionado
 
@@ -61,6 +63,9 @@ Mudanças relevantes no projeto e em sua documentação.
 - repositório privado `igonozoid/Bathroom-Mayhem` criado e sincronizado na branch `main`;
 - referências visuais enviadas via Git LFS com verificação íntegra;
 - página `bathroom-mayhem-full-pressure` criada no itch.io em modo Draft, ainda sem APK.
+- obstáculos de gameplay com leitura própria: turista distraído (pulo), cachorro (pulo) e gaivota (slide).
+- sprites transparentes de cachorro e gaivota integrados em `assets/art/obstacles/`.
+- APK ARM64 de teste renovado em `builds/android/BathroomMayhem-test.apk` após a revisão visual.
 
 ### Alterado
 
