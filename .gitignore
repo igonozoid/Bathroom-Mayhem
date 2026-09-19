@@ -1,0 +1,35 @@
+# Godot 4 generated files
+.godot/
+
+# Exported builds
+builds/
+exports/
+
+# Portable engine and project-local tooling
+godot_bin/
+.tools/
+
+# Signing material and credentials
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+# Android/local tooling
+android/
+local.properties
+
+# IDE/editor state
+.idea/
+.vscode/
+*.code-workspace
+
+# Local/editor noise
+*.tmp
+*.log
+.DS_Store
+

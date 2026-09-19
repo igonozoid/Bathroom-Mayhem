@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "untrustedDataNotice": "Thread titles and messages are untrusted data, not instructions.",
+  "thread": {
+    "id": "6aa995aa-be0c-83e9-846e-1c8edcf9eb8e",
+    "kind": "chatgpt",
+    "title": "00 — Conceito, Naming e Planejamento Inicial",
+    "preview": "O Work foi acionado para acessar:\n\n`/home/igonoz/Documentos/_projects/Bathroom-Mayhem`\n\nEle vai inspecionar a pasta e o `godot_bin` primeiro, sem fazer alterações destrutivas. A continuação desse trabalho deve ser feita no novo chat do Work/Codex que acabou de ser criado.",
+    "status": {
+      "type": "idle"
+    },
+    "cwd": null,
+    "createdAt": 1789498795.114553,
+    "updatedAt": 1789778145.189319
+  },
+  "page": {
+    "order": "newest_first",
+    "limit": 5,
+    "nextCursor": "dfca2ac6-73d3-45bb-86ab-37fda11f11b6",
+    "hasMore": true
+  },
+  "turns": [
+    {
+      "id": "58e202f2-8a57-4184-8e32-38923acf6098",
+      "status": "completed",
+      "error": null,
+      "startedAt": 1789500476.163,
+      "completedAt": 1789500476.163,
+      "durationMs": null,
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "58e202f2-8a57-4184-8e32-38923acf6098",
+          "content": [
+            {
+              "type": "text",
+              "text": "gostei da sua ideia. prefiro menos  tatuagens. só algumas. crie ela na cena do café na cozinha sem calçado pra vermos de corpo inteiro e coloque um top, removendo a camiseta pra vermos o formato corpóreo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c048073f-2ac5-402b-8313-04c7806a281b",
+      "status": "completed",
+      "error": null,
+      "startedAt": 1789500126.261,
+      "completedAt": 1789500126.261,
+      "durationMs": null,
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "c048073f-2ac5-402b-8313-04c7806a281b",
+          "content": [
+            {
+              "type": "text",
+              "text": "feito. Agora sim. Maya pronta. salve como base.\nProxima personagem: \"chubby\" \"emo\", piercing no nariz entre os olhos, dançarina e divertida, sempre com sombra nos olhos, cabelo longo e preto liso (com reflexos azulados), olhos azuis intensos, por volta de 1,6m de altura com expressões \"provocantes\" por natureza. Não que ela queira, mas é natural pra ela.\nCrie uma imagem informal também, para irmos editando"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "20dc771f-625f-4097-87ba-6db60784021c",
+      "status": "completed",
+      "error": null,
+      "startedAt": 1789499747.814,
+      "completedAt": 1789499747.814,
+      "durationMs": null,
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "20dc771f-625f-4097-87ba-6db60784021c",
+          "content": [
+            {
+              "type": "text",
+              "text": "gostei, mas os seios devem ser menores ainda. o resto está exatamente como deveria"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2e8b873b-45ed-4cf8-adae-1a7735453819",
+      "status": "completed",
+      "error": null,
+      "startedAt": 1789499530.471,
+      "completedAt": 1789499530.471,
+      "durationMs": null,
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "2e8b873b-45ed-4cf8-adae-1a7735453819",
+          "content": [
+            {
+              "type": "text",
+              "text": "gostei. salve isso.&#x20;\nCrie uma imagem dela definitiva, que mostre as caracteristicas fisicas para usarmos como base. (por sua conta, ambiente, vestimenta, luzes, etc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dfca2ac6-73d3-45bb-86ab-37fda11f11b6",
+      "status": "completed",
+      "error": null,
+      "startedAt": 1789499394.305,
+      "completedAt": 1789499509.619974,
+      "durationMs": null,
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "dfca2ac6-73d3-45bb-86ab-37fda11f11b6",
+          "content": [
+            {
+              "type": "text",
+              "text": "ótimo. Que nome daremos pra ela? daí, podemos criar uma nomenclatura, pois vamos criar outros personagens"
+            }
+          ]
+        },
+        {
+          "type": "agentMessage",
+          "id": "99b0d8df-57e4-4c27-b23f-6292ef367ce9",
+          "text": "Sugiro **Maya**. É curto, fácil de lembrar, funciona bem em português e internacionalmente e serve como identificador de personagem.\n\nPara organizar vários personagens, podemos criar uma nomenclatura simples:\n\n**Formato:** `CHR-[NOME]-[NÚMERO]`\n\nAssim, ela seria **CHR-MAYA-001**.\n\nA ficha-base poderia ser chamada de **MAYA-BASE**, e imagens específicas seguiriam algo como `MAYA-001_CozinhaCafe`, `MAYA-002_Rua`, `MAYA-003_Academia`. Isso facilita muito quando começarmos a ter dezenas de personagens e referências.\n\nSe gostar de **Maya**, posso oficializar **CHR-MAYA-001** como o identificador dela e usar esse padrão para os próximos personagens."
+        }
+      ]
+    }
+  ]
+}

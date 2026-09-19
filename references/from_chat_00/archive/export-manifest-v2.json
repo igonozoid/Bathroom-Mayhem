@@ -1,0 +1,203 @@
+{
+  "threadId": "6aa995aa-be0c-83e9-846e-1c8edcf9eb8e",
+  "title": "00 — Conceito, Naming e Planejamento Inicial",
+  "exportedAt": "2026-09-19T03:20:28.274Z",
+  "totalPages": 19,
+  "totalTurns": 95,
+  "attachments": [
+    {
+      "name": "Captura de tela de 2026-09-18 21-28-18.png",
+      "path": "/tmp/codex-file-preview-KBVNzz/Captura de tela de 2026-09-18 21-28-18.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-buyG6C/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-enK6ci/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-XKP0CC/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-zn6X39/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-CpvkTi/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-eastDc/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-G4RTP0/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-KvVJyj/image.png"
+    },
+    {
+      "name": "image.png",
+      "path": "/tmp/codex-file-preview-jopxWo/image.png"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "file": "page-001.json",
+      "turns": 5,
+      "nextCursor": "bbb216e1-85c8-49ba-b456-d9a38095a999",
+      "hasMore": true,
+      "attachments": 10
+    },
+    {
+      "page": 2,
+      "file": "page-002.json",
+      "turns": 5,
+      "nextCursor": "78ee0325-1fd7-461a-a704-8d7909417b0b",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 3,
+      "file": "page-003.json",
+      "turns": 5,
+      "nextCursor": "1e7036aa-5b48-4293-8643-682c75456767",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 4,
+      "file": "page-004.json",
+      "turns": 5,
+      "nextCursor": "298d6fb0-a545-4590-8a75-dda6b0801ff9",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 5,
+      "file": "page-005.json",
+      "turns": 5,
+      "nextCursor": "7717cf95-4de2-47bc-be11-a8666e97ffc5",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 6,
+      "file": "page-006.json",
+      "turns": 5,
+      "nextCursor": "c28c2a29-c714-4a63-a504-4f6c0f94bb47",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 7,
+      "file": "page-007.json",
+      "turns": 5,
+      "nextCursor": "e55f78a7-5a37-4062-96c6-fa89bd8f265c",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 8,
+      "file": "page-008.json",
+      "turns": 5,
+      "nextCursor": "dd6b02ef-799b-4c77-a48e-7fdc26c5d2a9",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 9,
+      "file": "page-009.json",
+      "turns": 5,
+      "nextCursor": "7b9df46d-3645-4773-92bb-ed521be065ab",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 10,
+      "file": "page-010.json",
+      "turns": 5,
+      "nextCursor": "f7b5b3eb-d8a0-401d-84c1-26b0974f78d4",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 11,
+      "file": "page-011.json",
+      "turns": 5,
+      "nextCursor": "81df6bc2-c7b6-4cfb-ba82-d5c4a3ce3656",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 12,
+      "file": "page-012.json",
+      "turns": 5,
+      "nextCursor": "a1d1342b-2629-403c-81c1-6fd70c6d092d",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 13,
+      "file": "page-013.json",
+      "turns": 5,
+      "nextCursor": "ad11cde6-272e-4b77-83a8-7c43ffe9345b",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 14,
+      "file": "page-014.json",
+      "turns": 5,
+      "nextCursor": "b4501fc6-93eb-4831-8051-23cc949e902d",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 15,
+      "file": "page-015.json",
+      "turns": 5,
+      "nextCursor": "19621e44-b7fd-4c72-baf4-5d592e120e51",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 16,
+      "file": "page-016.json",
+      "turns": 5,
+      "nextCursor": "6ab8e4aa-d29e-4b43-8233-0d4d4276d41f",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 17,
+      "file": "page-017.json",
+      "turns": 5,
+      "nextCursor": "d181d20f-5142-4108-bf8b-8bd51c7576c0",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 18,
+      "file": "page-018.json",
+      "turns": 5,
+      "nextCursor": "dfca2ac6-73d3-45bb-86ab-37fda11f11b6",
+      "hasMore": true,
+      "attachments": 0
+    },
+    {
+      "page": 19,
+      "file": "page-019.json",
+      "turns": 5,
+      "nextCursor": null,
+      "hasMore": false,
+      "attachments": 0
+    }
+  ]
+}
