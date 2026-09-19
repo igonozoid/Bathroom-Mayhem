@@ -12,9 +12,9 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P0** Definir Android APK como formato de teste.
 - [x] **P0** Definir itch.io restrito/não listado como canal de distribuição dos testes.
 - [x] **P0** Definir resolução lógica 540 × 960 e orientação retrato.
-- [ ] **P0** Substituir joystick/movimentação livre por auto-run lateral.
-- [ ] **P0** Implementar tap, hold, swipe down e duplo toque.
-- [ ] **P0** Definir loop, vitória, derrota e duração da partida.
+- [x] **P0** Substituir joystick/movimentação livre por auto-run lateral.
+- [x] **P0** Implementar tap, hold, swipe down e duplo toque.
+- [x] **P0** Implementar loop de corrida, Pressure, vitória, derrota e reinício.
 - [x] **P0** Criar o projeto Godot usando a versão portable já validada.
 - [x] **P0** Inicializar Git local na branch `main` e configurar Git LFS.
 - [x] **P0** Configurar `.gitignore` para Godot.
@@ -61,4 +61,5 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - As referências históricas possuem contradições; `CANON.md`, `ART_BIBLE.md` e o catálogo visual são as fontes válidas.
 - Nenhum aparelho Android estava conectado durante a geração; teste físico pendente.
 - O APK atual contém gameplay top-down/joystick e não está aprovado para playtest do conceito.
+- Captura de PNG não funciona no backend headless sem textura de viewport; a inspeção visual deste marco precisa ocorrer no editor com janela ou em aparelho Android.
 - Prazo curto exige congelamento precoce de escopo.

@@ -38,6 +38,8 @@ Configuração atual:
 
 > **OBSOLETA — não distribuir para avaliação de gameplay.** A build atual valida apenas exportação Android e assets; ainda contém o protótipo de movimentação livre que contradiz o auto-runner canônico.
 
+> A próxima build deverá ser gerada depois de inspeção visual em janela/editor ou dispositivo Android: o ambiente headless disponível valida scripts e runtime, mas não expõe uma textura de viewport para captura PNG.
+
 - Arquivo: `builds/android/BathroomMayhem-test.apk`
 - Tamanho: aproximadamente 40 MB.
 - SHA-256: `82be6782c5d16838d8aa198459d74fd54e5f6fb347f7cf60a27552be2eec2dbe`

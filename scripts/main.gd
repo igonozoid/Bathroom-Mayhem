@@ -1,339 +1,299 @@
 extends Node2D
 
-const VIEW_SIZE := Vector2(540, 960)
-const WORLD_HEIGHT := 1800.0
-const PLAYER_SPEED := 320.0
-const TARGET_SCORE := 4
-const TOUCH_RADIUS := 72.0
-const TOUCH_DEAD_ZONE := 12.0
-const ATLAS := preload("res://assets/sprites/bathroom_atlas.png")
+const SIZE := Vector2(540, 960)
+const GROUND := 792.0
+const PLAYER_X := 135.0
+const SPEED := 275.0
+const GRAVITY := 1750.0
+const JUMP_POWER := -650.0
+const GOAL := 6200.0
+const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
+const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
 
-# Regions in the generated 1536x1536 source atlas. Keeping them here makes
-# replacing or fine-tuning prototype art straightforward.
-const REGIONS := {
-	"player": Rect2(20, 60, 480, 430),
-	"soap": Rect2(500, 140, 360, 330),
-	"duck": Rect2(850, 90, 360, 390),
-	"roll": Rect2(140, 490, 460, 390),
-	"puddle": Rect2(670, 520, 520, 340),
-	"tile_a": Rect2(35, 890, 290, 310),
-	"tile_b": Rect2(340, 890, 290, 310),
-	"tile_c": Rect2(640, 890, 290, 310),
-	"tile_d": Rect2(940, 890, 290, 310),
-}
-
-var player: CharacterBody2D
-var score := 0
-var game_over := false
-var status_label: Label
+var luana: Sprite2D
+var player_y := GROUND
+var velocity_y := 0.0
+var distance := 0.0
+var pressure := 16.0
+var dignity := 100
+var paper := 0
+var mayhem := 0
+var state := "running"
+var slide_time := 0.0
+var hold_time := 0.0
+var jump_held := false
+var relief_cooldown := 0.0
+var press_point := Vector2.ZERO
+var press_active := false
+var last_tap := -10.0
+var course: Array[Dictionary] = []
+var pressure_fill: ColorRect
+var distance_label: Label
 var score_label: Label
-var touch_id := -1
-var touch_origin := Vector2.ZERO
-var touch_direction := Vector2.ZERO
-var joystick_base: Control
-var joystick_knob: Control
+var paper_label: Label
+var event_label: Label
+var relief_label: Label
+var result_panel: Panel
+var result_title: Label
+var result_text: Label
 
 
 func _ready() -> void:
-	build_floor()
-	build_boundaries()
+	build_backdrop()
 	build_player()
-	build_level()
 	build_hud()
+	build_course()
 	queue_redraw()
-	if "--capture-preview" in OS.get_cmdline_user_args():
+	if "--capture-preview" in OS.get_cmdline_user_args() or "--capture-preview" in OS.get_cmdline_args():
+		print("Bathroom Mayhem QA capture requested")
 		capture_preview.call_deferred()
 
 
 func capture_preview() -> void:
-	# QA helper: render through the real graphics backend, save one frame and quit.
-	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw
+	await get_tree().process_frame
+	await get_tree().process_frame
+	RenderingServer.force_draw()
 	var image := get_viewport().get_texture().get_image()
-	var result := image.save_png("/tmp/bathroom-mayhem-preview.png")
-	if result != OK:
-		push_error("Could not save QA preview: %s" % error_string(result))
+	if image:
+		image.save_png("/tmp/bathroom-mayhem-preview.png")
+	else:
+		push_warning("Viewport capture is unavailable with the active headless renderer.")
 	get_tree().quit()
 
 
-func _physics_process(_delta: float) -> void:
-	if game_over:
-		player.velocity = Vector2.ZERO
-		if Input.is_action_just_pressed("restart"):
-			get_tree().reload_current_scene()
-		return
+func build_backdrop() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = -1
+	var image := TextureRect.new()
+	image.texture = BACKGROUND
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	image.modulate = Color(1, 1, 1, 0.72)
+	layer.add_child(image)
+	add_child(layer)
 
-	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if touch_direction.length_squared() > 0.0:
-		direction = touch_direction
-	player.velocity = direction * PLAYER_SPEED
-	player.move_and_slide()
-	player.position.x = clampf(player.position.x, 55.0, VIEW_SIZE.x - 55.0)
-	player.position.y = clampf(player.position.y, 70.0, WORLD_HEIGHT - 70.0)
+
+func build_player() -> void:
+	luana = Sprite2D.new()
+	luana.position = Vector2(PLAYER_X, player_y - 108.0)
+	luana.z_index = 8
+	add_child(luana)
+	set_luana_frame(Rect2(292, 0, 315, 410), 0.43)
+
+
+func set_luana_frame(region: Rect2, scale_value: float) -> void:
+	var atlas := AtlasTexture.new()
+	atlas.atlas = SHEET
+	atlas.region = region
+	luana.texture = atlas
+	luana.scale = Vector2.ONE * scale_value
+
+
+func build_course() -> void:
+	for spec in [[650.0,"paper",705.0],[975.0,"low",742.0],[1210.0,"water",700.0],[1490.0,"high",650.0],[1790.0,"paper",705.0],[2080.0,"low",742.0],[2390.0,"coffee",700.0],[2690.0,"high",650.0],[3020.0,"paper",705.0],[3350.0,"low",742.0],[3640.0,"water",700.0],[3950.0,"high",650.0],[4280.0,"paper",705.0],[4560.0,"low",742.0],[4880.0,"paper",705.0],[5200.0,"high",650.0],[5520.0,"water",700.0],[GOAL,"toilet",676.0]]:
+		course.append({"x": spec[0], "kind": spec[1], "y": spec[2], "used": false})
+
+
+func _physics_process(delta: float) -> void:
+	if state != "running":
+		return
+	distance += SPEED * delta
+	pressure += 5.9 * delta
+	relief_cooldown = maxf(0.0, relief_cooldown - delta)
+	slide_time = maxf(0.0, slide_time - delta)
+	if Input.is_action_just_pressed("jump"):
+		jump()
+	if Input.is_action_pressed("jump") and jump_held and hold_time < 0.18 and velocity_y < 0:
+		hold_time += delta
+		velocity_y = minf(velocity_y, -920.0)
+	if Input.is_action_just_released("jump"):
+		jump_held = false
+	if Input.is_action_just_pressed("slide"):
+		slide()
+	if Input.is_action_just_pressed("relief"):
+		relief()
+	velocity_y += GRAVITY * delta
+	player_y += velocity_y * delta
+	if player_y >= GROUND:
+		player_y = GROUND
+		velocity_y = 0.0
+	update_luana()
+	check_course()
+	update_hud()
+	if pressure >= 100:
+		finish(false, "CODE BROWN! A pressão venceu.")
+	queue_redraw()
+
+
+func update_luana() -> void:
+	luana.position = Vector2(PLAYER_X, player_y - (62.0 if sliding() else 108.0))
+	if sliding():
+		set_luana_frame(Rect2(932, 410, 310, 392), 0.38)
+	elif player_y < GROUND - 8:
+		set_luana_frame(Rect2(0, 410, 318, 410), 0.42)
+	elif pressure >= 72:
+		set_luana_frame(Rect2(320, 820, 315, 405), 0.42)
+	else:
+		set_luana_frame(Rect2(292 + (int(distance / 115.0) % 3) * 315, 0, 315, 410), 0.43)
+
+
+func sliding() -> bool:
+	return slide_time > 0 and player_y >= GROUND - 1
+
+
+func jump() -> void:
+	if player_y >= GROUND - 1 and not sliding():
+		velocity_y = JUMP_POWER
+		hold_time = 0
+		jump_held = true
+		show_event("PULO!", Color("dffcff"))
+
+
+func slide() -> void:
+	if player_y >= GROUND - 1:
+		slide_time = 0.55
+		show_event("SLIDE!", Color("ffe09b"))
+
+
+func relief() -> void:
+	if relief_cooldown > 0:
+		show_event("ALÍVIO RECARGANDO", Color("ffcf7d"))
+		return
+	pressure = maxf(0, pressure - 24)
+	dignity = max(0, dignity - 9)
+	mayhem += 1
+	relief_cooldown = 3
+	show_event("CONTROLLED RELIEF  •  PRESSURE -24", Color("a7f4c0"))
+
+
+func player_box() -> Rect2:
+	return Rect2(PLAYER_X - 36, GROUND - 46, 76, 42) if sliding() else Rect2(PLAYER_X - 32, player_y - 118, 66, 108)
+
+
+func object_box(kind: String, x: float, y: float) -> Rect2:
+	if kind in ["paper", "water", "coffee"]:
+		return Rect2(x - 25, y - 25, 50, 50)
+	if kind == "low":
+		return Rect2(x - 35, y - 40, 70, 45)
+	if kind == "high":
+		return Rect2(x - 45, y - 15, 90, 36)
+	return Rect2(x - 42, y - 95, 84, 105)
+
+
+func check_course() -> void:
+	for item in course:
+		if item.used:
+			continue
+		var x: float = item.x - distance + PLAYER_X
+		if x < -180 or x > 720:
+			continue
+		if not player_box().intersects(object_box(item.kind, x, item.y)):
+			continue
+		match item.kind:
+			"paper":
+				item.used = true; paper += 1; pressure = maxf(0, pressure - 4); show_event("PAPEL +1  •  PRESSURE -4", Color("fff4a3"))
+			"water":
+				item.used = true; pressure = maxf(0, pressure - 12); show_event("ÁGUA DE COCO  •  PRESSURE -12", Color("a5f5ff"))
+			"coffee":
+				item.used = true; pressure = minf(100, pressure + 14); mayhem += 2; show_event("CAFÉ! PÉSSIMA IDEIA", Color("ffb871"))
+			"low":
+				finish(false, "TROMBOU NO CAOS DA PRAIA!")
+			"high":
+				if not sliding(): finish(false, "A PLACA PEGOU VOCÊ!")
+			"toilet":
+				finish(true, "CHEGOU AO SANTO TRONO!")
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
-		if event.pressed and game_over:
-			get_tree().reload_current_scene()
-			return
-		if event.pressed and touch_id == -1:
-			touch_id = event.index
-			touch_origin = event.position
-			joystick_base.position = touch_origin - joystick_base.size * 0.5
-			joystick_base.visible = true
-			joystick_knob.position = (joystick_base.size - joystick_knob.size) * 0.5
-		elif not event.pressed and event.index == touch_id:
-			reset_touch_control()
-	elif event is InputEventScreenDrag and event.index == touch_id:
-		var offset: Vector2 = event.position - touch_origin
-		if offset.length() <= TOUCH_DEAD_ZONE:
-			touch_direction = Vector2.ZERO
+		if event.pressed:
+			if state != "running": get_tree().reload_current_scene(); return
+			var now := Time.get_ticks_msec() / 1000.0
+			if now - last_tap <= 0.28:
+				relief(); last_tap = -10; press_active = false; return
+			last_tap = now; press_active = true; press_point = event.position; jump()
+		elif press_active:
+			press_active = false; jump_held = false
+	elif event is InputEventScreenDrag and press_active and event.position.y - press_point.y > 64:
+		press_active = false; jump_held = false; slide()
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			if state != "running": get_tree().reload_current_scene(); return
+			press_active = true; press_point = event.position; jump()
 		else:
-			touch_direction = offset.limit_length(TOUCH_RADIUS) / TOUCH_RADIUS
-		var visual_offset: Vector2 = offset.limit_length(TOUCH_RADIUS)
-		joystick_knob.position = (joystick_base.size - joystick_knob.size) * 0.5 + visual_offset
-
-
-func reset_touch_control() -> void:
-	touch_id = -1
-	touch_direction = Vector2.ZERO
-	if joystick_base:
-		joystick_base.visible = false
+			press_active = false; jump_held = false
+	elif event is InputEventMouseMotion and press_active and event.position.y - press_point.y > 64:
+		press_active = false; jump_held = false; slide()
 
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, VIEW_SIZE.x, WORLD_HEIGHT), Color("bce9e6"))
-	draw_rect(Rect2(18, 0, VIEW_SIZE.x - 36, WORLD_HEIGHT), Color("dff7f2"))
+	draw_rect(Rect2(0, 638, 540, 322), Color("f8cf82"))
+	draw_rect(Rect2(0, 754, 540, 206), Color("edb96b"))
+	var offset := fmod(distance * 0.38, 110.0)
+	for stripe_x in range(-120, 660, 110):
+		draw_line(Vector2(stripe_x - offset, 832), Vector2(stripe_x + 58 - offset, 832), Color(0.74, 0.47, 0.22, 0.25), 3)
+	for item in course:
+		if not item.used:
+			var x: float = item.x - distance + PLAYER_X
+			if x > -120 and x < 660: draw_object(item.kind, Vector2(x, item.y))
 
 
-func atlas_texture(region: Rect2) -> AtlasTexture:
-	var texture := AtlasTexture.new()
-	texture.atlas = ATLAS
-	texture.region = region
-	return texture
-
-
-func sprite_for(kind: String, target_size: float) -> Sprite2D:
-	var sprite := Sprite2D.new()
-	sprite.texture = atlas_texture(REGIONS[kind])
-	var region: Rect2 = REGIONS[kind]
-	var scale_factor := target_size / maxf(region.size.x, region.size.y)
-	sprite.scale = Vector2.ONE * scale_factor
-	return sprite
-
-
-func build_floor() -> void:
-	var tile_names := ["tile_a", "tile_b", "tile_c", "tile_d"]
-	var index := 0
-	for y in range(110, int(WORLD_HEIGHT), 145):
-		for x in [90, 270, 450]:
-			var tile := sprite_for(tile_names[index % tile_names.size()], 150.0)
-			tile.position = Vector2(x, y)
-			tile.modulate = Color(1, 1, 1, 0.78)
-			tile.z_index = -2
-			add_child(tile)
-			index += 1
-
-
-func build_player() -> void:
-	player = CharacterBody2D.new()
-	player.name = "Player"
-	player.position = Vector2(270, 1640)
-	player.z_index = 10
-	add_child(player)
-	player.add_child(sprite_for("player", 112.0))
-
-	var collision := CollisionShape2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = 35.0
-	collision.shape = shape
-	player.add_child(collision)
-
-	var camera := Camera2D.new()
-	camera.position = Vector2(0, -140)
-	camera.position_smoothing_enabled = true
-	camera.position_smoothing_speed = 7.0
-	camera.limit_left = 0
-	camera.limit_right = int(VIEW_SIZE.x)
-	camera.limit_top = 0
-	camera.limit_bottom = int(WORLD_HEIGHT)
-	player.add_child(camera)
-
-
-func build_boundaries() -> void:
-	make_wall(Vector2(5, WORLD_HEIGHT / 2.0), Vector2(10, WORLD_HEIGHT))
-	make_wall(Vector2(VIEW_SIZE.x - 5, WORLD_HEIGHT / 2.0), Vector2(10, WORLD_HEIGHT))
-	make_wall(Vector2(VIEW_SIZE.x / 2.0, 5), Vector2(VIEW_SIZE.x, 10))
-	make_wall(Vector2(VIEW_SIZE.x / 2.0, WORLD_HEIGHT - 5), Vector2(VIEW_SIZE.x, 10))
-
-
-func make_wall(position_value: Vector2, size: Vector2) -> void:
-	var wall := StaticBody2D.new()
-	wall.position = position_value
-	var collision := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = size
-	collision.shape = shape
-	wall.add_child(collision)
-	add_child(wall)
-
-
-func build_level() -> void:
-	make_collectible(Vector2(125, 1420), "soap")
-	make_collectible(Vector2(420, 1130), "duck")
-	make_collectible(Vector2(115, 750), "duck")
-	make_collectible(Vector2(410, 330), "soap")
-
-	make_hazard(Vector2(370, 1480))
-	make_hazard(Vector2(150, 1010))
-	make_hazard(Vector2(370, 650))
-
-	make_obstacle(Vector2(270, 1250))
-	make_obstacle(Vector2(260, 510))
-
-
-func make_collectible(position_value: Vector2, kind: String) -> void:
-	var area := Area2D.new()
-	area.position = position_value
-	area.z_index = 4
-	area.add_child(sprite_for(kind, 82.0))
-	var collision := CollisionShape2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = 29.0
-	collision.shape = shape
-	area.add_child(collision)
-	area.body_entered.connect(func(body: Node2D) -> void:
-		if body == player and not game_over:
-			score += 1
-			score_label.text = "COLETADOS  %d / %d" % [score, TARGET_SCORE]
-			area.queue_free()
-			if score >= TARGET_SCORE:
-				finish_game(true)
-	)
-	add_child(area)
-
-
-func make_hazard(position_value: Vector2) -> void:
-	var area := Area2D.new()
-	area.position = position_value
-	area.z_index = 2
-	area.add_child(sprite_for("puddle", 150.0))
-	var collision := CollisionShape2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = 48.0
-	collision.shape = shape
-	area.add_child(collision)
-	area.body_entered.connect(func(body: Node2D) -> void:
-		if body == player and not game_over:
-			finish_game(false)
-	)
-	add_child(area)
-
-
-func make_obstacle(position_value: Vector2) -> void:
-	var obstacle := StaticBody2D.new()
-	obstacle.position = position_value
-	obstacle.z_index = 5
-	obstacle.add_child(sprite_for("roll", 130.0))
-	var collision := CollisionShape2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = 43.0
-	collision.shape = shape
-	obstacle.add_child(collision)
-	add_child(obstacle)
+func draw_object(kind: String, p: Vector2) -> void:
+	match kind:
+		"paper":
+			draw_circle(p, 23, Color("fff5d6")); draw_circle(p, 12, Color("5acbd1")); draw_arc(p, 23, 0, TAU, 24, Color("173c5d"), 3)
+		"water":
+			draw_circle(p, 25, Color("66dded")); draw_circle(p + Vector2(-8,-9), 8, Color("e7ffff"))
+		"coffee":
+			draw_circle(p, 24, Color("7a3f29")); draw_circle(p, 14, Color("241510")); draw_arc(p + Vector2(24,0), 12, -1.2, 1.2, 14, Color("fff1d0"), 5)
+		"low":
+			draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("ef765e")); draw_rect(Rect2(p.x-42,p.y-42,84,42), Color("173c5d"), false, 4); draw_line(p+Vector2(-28,-31),p+Vector2(28,-12),Color("ffe299"),5)
+		"high":
+			draw_line(p+Vector2(-46,68),p+Vector2(-46,-20),Color("72482b"),10); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("ff8c58")); draw_rect(Rect2(p.x-46,p.y-20,112,40),Color("173c5d"),false,4); draw_string(ThemeDB.fallback_font,p+Vector2(-31,7),"BAIXE!",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("fff7df"))
+		"toilet":
+			draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("62d2d3")); draw_rect(Rect2(p.x-52,p.y-118,104,118),Color("173c5d"),false,5); draw_rect(Rect2(p.x-32,p.y-88,64,88),Color("fff5dd")); draw_string(ThemeDB.fallback_font,p+Vector2(-29,-98),"WC",HORIZONTAL_ALIGNMENT_LEFT,-1,26,Color("173c5d"))
 
 
 func build_hud() -> void:
-	var layer := CanvasLayer.new()
-	add_child(layer)
-	var safe_root := Control.new()
-	safe_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	safe_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(safe_root)
-
-	var panel := ColorRect.new()
-	panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	panel.offset_left = 18
-	panel.offset_top = 22
-	panel.offset_right = -18
-	panel.offset_bottom = 116
-	panel.color = Color(0.035, 0.09, 0.16, 0.9)
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	safe_root.add_child(panel)
-
-	var title := Label.new()
-	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	title.offset_left = 35
-	title.offset_top = 33
-	title.offset_right = -35
-	title.offset_bottom = 61
-	title.text = "BATHROOM MAYHEM  •  PROTÓTIPO"
-	title.add_theme_font_size_override("font_size", 20)
-	safe_root.add_child(title)
-
-	score_label = Label.new()
-	score_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	score_label.offset_left = 35
-	score_label.offset_top = 68
-	score_label.offset_right = -35
-	score_label.offset_bottom = 101
-	score_label.text = "COLETADOS  0 / %d" % TARGET_SCORE
-	score_label.add_theme_font_size_override("font_size", 22)
-	safe_root.add_child(score_label)
-
-	var status_panel := ColorRect.new()
-	status_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	status_panel.offset_left = 18
-	status_panel.offset_top = -82
-	status_panel.offset_right = -18
-	status_panel.offset_bottom = -16
-	status_panel.color = Color(0.035, 0.09, 0.16, 0.84)
-	status_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	safe_root.add_child(status_panel)
-
-	status_label = Label.new()
-	status_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	status_label.offset_left = 24
-	status_label.offset_top = -78
-	status_label.offset_right = -24
-	status_label.offset_bottom = -20
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.text = "ARRASTE PARA MOVER  •  Colete tudo  •  Evite as poças"
-	status_label.add_theme_font_size_override("font_size", 16)
-	safe_root.add_child(status_label)
-
-	joystick_base = Panel.new()
-	joystick_base.size = Vector2(164, 164)
-	joystick_base.visible = false
-	joystick_base.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var base_style := StyleBoxFlat.new()
-	base_style.bg_color = Color(0.04, 0.12, 0.20, 0.42)
-	base_style.corner_radius_top_left = 82
-	base_style.corner_radius_top_right = 82
-	base_style.corner_radius_bottom_left = 82
-	base_style.corner_radius_bottom_right = 82
-	joystick_base.add_theme_stylebox_override("panel", base_style)
-	safe_root.add_child(joystick_base)
-
-	joystick_knob = Panel.new()
-	joystick_knob.size = Vector2(68, 68)
-	joystick_knob.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var knob_style := StyleBoxFlat.new()
-	knob_style.bg_color = Color(0.35, 0.93, 0.91, 0.8)
-	knob_style.corner_radius_top_left = 34
-	knob_style.corner_radius_top_right = 34
-	knob_style.corner_radius_bottom_left = 34
-	knob_style.corner_radius_bottom_right = 34
-	joystick_knob.add_theme_stylebox_override("panel", knob_style)
-	joystick_base.add_child(joystick_knob)
+	var layer := CanvasLayer.new(); layer.layer = 5; add_child(layer)
+	var root := Control.new(); root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); root.mouse_filter = Control.MOUSE_FILTER_IGNORE; layer.add_child(root)
+	root.add_child(make_panel(Rect2(16,18,508,134),Color("102c46"),18))
+	var title := label("BATHROOM MAYHEM",20,Color.WHITE,Rect2(32,28,470,26)); root.add_child(title)
+	root.add_child(label("PRESSURE",15,Color("ffefc7"),Rect2(32,62,100,22)))
+	var back := ColorRect.new(); back.position=Vector2(133,66); back.size=Vector2(250,17); back.color=Color("402946"); root.add_child(back)
+	pressure_fill=ColorRect.new(); pressure_fill.position=Vector2(133,66); pressure_fill.size=Vector2(40,17); root.add_child(pressure_fill)
+	paper_label=label("PAPEL 00",16,Color("fff3c7"),Rect2(398,61,108,25)); root.add_child(paper_label)
+	distance_label=label("BANHEIRO 6.2 km",16,Color("d6f8ff"),Rect2(32,104,190,25)); root.add_child(distance_label)
+	score_label=label("DIGNIDADE 100  •  CAOS x0",16,Color("ffd88e"),Rect2(230,104,270,25)); score_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT; root.add_child(score_label)
+	event_label=label("",19,Color.WHITE,Rect2(32,175,476,32)); event_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(event_label)
+	root.add_child(make_panel(Rect2(16,856,508,88),Color(0.04,0.11,0.18,0.82),18))
+	var guide:=label("TOQUE: PULO  •  SEGURE: ALTO  •  SWIPE ↓: SLIDE",15,Color("f5fbff"),Rect2(26,865,488,24)); guide.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(guide)
+	relief_label=label("TOQUE DUPLO: CONTROLLED RELIEF",15,Color("9ff1d6"),Rect2(26,899,488,24)); relief_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(relief_label)
+	result_panel=make_panel(Rect2(50,327,440,306),Color("102c46"),30); result_panel.visible=false; root.add_child(result_panel)
+	result_title=label("",30,Color("fff0bd"),Rect2(70,365,400,48)); result_title.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; root.add_child(result_title)
+	result_text=label("",18,Color.WHITE,Rect2(84,433,372,150)); result_text.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; result_text.vertical_alignment=VERTICAL_ALIGNMENT_CENTER; root.add_child(result_text)
 
 
-func finish_game(won: bool) -> void:
-	game_over = true
-	if won:
-		status_label.text = "BANHEIRO SALVO!  •  Toque ou R para reiniciar"
-	else:
-		status_label.text = "ESCORREGOU!  •  Toque ou R para tentar novamente"
-	status_label.add_theme_color_override("font_color", Color("ffcf5c") if won else Color("ff8a80"))
+func make_panel(rect: Rect2, color: Color, radius: int) -> Panel:
+	var node:=Panel.new(); node.position=rect.position; node.size=rect.size; node.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	var style:=StyleBoxFlat.new(); style.bg_color=color; style.set_corner_radius_all(radius); style.border_color=Color("5bd6d0"); style.set_border_width_all(2); node.add_theme_stylebox_override("panel",style); return node
+
+
+func label(value: String, font_size: int, color: Color, rect: Rect2) -> Label:
+	var node:=Label.new(); node.text=value; node.position=rect.position; node.size=rect.size; node.add_theme_font_size_override("font_size",font_size); node.add_theme_color_override("font_color",color); node.add_theme_color_override("font_outline_color",Color("102033")); node.add_theme_constant_override("outline_size",2); node.mouse_filter=Control.MOUSE_FILTER_IGNORE; return node
+
+
+func update_hud() -> void:
+	pressure_fill.size.x=250.0*clampf(pressure/100.0,0,1); pressure_fill.color=Color("67ddcc").lerp(Color("ff5f70"),pressure/100.0)
+	paper_label.text="PAPEL %02d"%paper; distance_label.text="BANHEIRO %.1f km"%maxf(0,(GOAL-distance)/1000.0); score_label.text="DIGNIDADE %03d  •  CAOS x%d"%[dignity,mayhem]
+	relief_label.text="TOQUE DUPLO: CONTROLLED RELIEF" if relief_cooldown<=0 else "ALÍVIO RECARGA: %.1fs"%relief_cooldown
+
+
+func show_event(text: String, color: Color) -> void:
+	event_label.text=text; event_label.add_theme_color_override("font_color",color)
+
+
+func finish(won: bool, text: String) -> void:
+	if state != "running": return
+	state="won" if won else "lost"; result_panel.visible=true; result_title.text="SUCESSO!" if won else "MAYHEM!"; result_title.add_theme_color_override("font_color",Color("a7f4c0") if won else Color("ff9d8f")); result_text.text="%s\n\nPapel: %d  •  Dignidade: %d\nCaos: x%d\n\nToque na tela ou R para reiniciar."%[text,paper,dignity,mayhem]; relief_label.text="TOQUE PARA RECOMEÇAR"

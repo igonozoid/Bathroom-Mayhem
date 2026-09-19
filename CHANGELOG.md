@@ -40,6 +40,8 @@ Mudanças relevantes no projeto e em sua documentação.
 - joystick/arraste marcados como direção descartada;
 - APK top-down marcado como obsoleto para avaliação de gameplay;
 - controles canônicos registrados: tap, hold, swipe down e duplo toque.
+- cena principal reconstruída como auto-runner lateral em retrato; joystick e movimento livre removidos do código.
+- loop inicial de Pressure, pulo variável, slide, Controlled Relief, coleta, falha, sucesso e reinício implementado.
 
 ### Adicionado
 
