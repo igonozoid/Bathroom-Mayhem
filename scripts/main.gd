@@ -12,14 +12,18 @@ const LUANA_RUN_CONTACT := preload("res://assets/art/characters/luana/v2/luana_r
 const LUANA_RUN_PASSING := preload("res://assets/art/characters/luana/v2/luana_run_passing_v2.png")
 const LUANA_RUN_RECOIL := preload("res://assets/art/characters/luana/v2/luana_run_recoil_v2.png")
 const LUANA_RUN_HIGH_KNEE := preload("res://assets/art/characters/luana/v2/luana_run_high_knee_v2.png")
+const LUANA_RUN_EXTENSION := preload("res://assets/art/characters/luana/v2/luana_run_extension_v2.png")
+const LUANA_RUN_COMPRESSION := preload("res://assets/art/characters/luana/v2/luana_run_compression_v2.png")
+const LUANA_RUN_CONTACT_LEFT := preload("res://assets/art/characters/luana/v2/luana_run_contact_left_v2.png")
+const LUANA_RUN_PUSH_OFF := preload("res://assets/art/characters/luana/v2/luana_run_push_off_v2.png")
 const LUANA_JUMP_SHORT := preload("res://assets/art/characters/luana/v2/luana_jump_short_v2.png")
 const LUANA_JUMP_LONG := preload("res://assets/art/characters/luana/v2/luana_jump_long_v2.png")
 const BACKGROUND := preload("res://assets/art/backgrounds/beach_run_background_v1.png")
 const SEAGULL := preload("res://assets/art/obstacles/seagull_flying_v1.png")
 const BEACH_DOG := preload("res://assets/art/obstacles/beach_dog_running_v1.png")
 const PLAYER_RUN_SCALE := 0.095
-const RUN_CYCLE := [LUANA_RUN_CONTACT, LUANA_RUN_RECOIL, LUANA_RUN_PASSING, LUANA_RUN_HIGH_KNEE]
-const RUN_SCALES := [0.095, 0.089, 0.095, 0.080]
+const RUN_CYCLE := [LUANA_RUN_CONTACT, LUANA_RUN_RECOIL, LUANA_RUN_PASSING, LUANA_RUN_HIGH_KNEE, LUANA_RUN_EXTENSION, LUANA_RUN_COMPRESSION, LUANA_RUN_CONTACT_LEFT, LUANA_RUN_PUSH_OFF]
+const RUN_SCALES := [0.095, 0.089, 0.095, 0.080, 0.100, 0.083, 0.100, 0.100]
 
 var luana: Sprite2D
 var player_y := GROUND

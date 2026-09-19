@@ -70,6 +70,7 @@ Mudanças relevantes no projeto e em sua documentação.
 - splash, menu principal e tutorial de gestos antes da corrida.
 - parallax de praia em três velocidades e animação visual de turista, cachorro e gaivota.
 - dois quadros adicionais de corrida para ciclo de quatro fases da Luana.
+- quatro quadros adicionais para expandir a corrida da Luana para oito fases.
 
 ### Alterado
 
