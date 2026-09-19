@@ -9,7 +9,8 @@ Este documento prevalece sobre protótipos temporários ou textos antigos que o 
 - **Franquia:** Bathroom Mayhem
 - **Capítulo 1:** Full Pressure
 - **Engine:** Godot 4.7
-- **Plataforma inicial:** Android
+- **Plataforma de teste atual:** Linux x86-64
+- **Plataforma futura:** Android
 - **Orientação:** retrato, mobile-first
 - **Referência visual:** 1080 × 1920
 - **Resolução lógica do projeto:** 540 × 960
@@ -88,5 +89,4 @@ Habilidade de Luana: reduz parcialmente Pressure, diminui Dignity e provoca rea�
 - um fail;
 - um banheiro/success;
 - reinício rápido;
-- APK testável em aparelho físico.
-
+- executável Linux testável fora do editor; Android permanece adiado.

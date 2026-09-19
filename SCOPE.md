@@ -8,7 +8,7 @@ Entregar em 7 dias uma versão curta e publicável de Bathroom Mayhem. O jogo de
 
 ## Alvo mobile
 
-- Plataforma inicial provisória: Android.
+- Plataforma de teste provisória: Linux x86-64; Android permanece um alvo futuro.
 - Orientação: retrato.
 - Resolução lógica: 540 × 960, proporção-base 9:16.
 - Adaptação: conteúdo expandido para outras proporções, mantendo HUD ancorado nas bordas.
@@ -30,7 +30,7 @@ Luana atravessa a praia em uma corrida desesperada até um banheiro. O objetivo 
 - [ ] Interface permanece legível em 9:16, 19.5:9 e 20:9.
 - [ ] Controles por toque funcionam sem depender de teclado.
 - [ ] Não existe controle horizontal manual ou joystick no gameplay.
-- [ ] Auto-run, pulo variável, slide e duplo toque funcionam em aparelho físico.
+- [ ] Auto-run, pulo variável, slide e habilidade especial funcionam em execução Linux fora do editor.
 - [ ] HUD respeita margens seguras em aparelhos com recorte de tela.
 - [ ] Áudio possui controles adequados, se incluído.
 - [ ] Créditos e licenças de assets estão registrados.

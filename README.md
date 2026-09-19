@@ -5,10 +5,10 @@ Projeto em Godot com uma janela de **7 dias** para produzir uma primeira versão
 ## Estado atual
 
 - Engine: Godot 4.7 stable (portable)
-- Plataforma-alvo: Android ARM64, retrato, resolução lógica 540 × 960
+- Plataforma de teste: Linux x86-64; layout em retrato, resolução lógica 540 × 960
 - Conceito: auto-runner/plataforma 2D lateral com controles por gesto
-- Marco atual: reconstrução do protótipo canônico para APK de teste fechado
-- Distribuição planejada: código privado no GitHub e APK restrito no itch.io
+- Marco atual: reconstrução do vertical slice para executável Linux de teste
+- Distribuição atual: executável local Linux; GitHub privado preserva código e histórico
 
 ## Documentação
 

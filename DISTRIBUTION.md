@@ -5,47 +5,32 @@ Atualizado em: 2026-09-19
 ## Estratégia escolhida
 
 - **GitHub privado:** código-fonte, documentação, histórico e colaboração.
-- **itch.io não listado ou restrito:** página simples para distribuir o APK aos testadores.
-- **APK Android:** instalação manual durante a sprint.
+- **itch.io não listado ou restrito:** canal futuro, somente após validar o MVP Linux.
+- **Linux x86-64:** distribuição local atual para testes no Dell.
 - **Play Store:** fora do escopo desta primeira versão.
 
-O GitHub não deve conter credenciais, keystores ou senhas. Builds podem ser anexadas a uma release privada para arquivo interno, mas o itch.io será o ponto de entrega para os testadores.
+O GitHub não deve conter credenciais, keystores ou senhas. Nesta etapa, a entrega é local; itch.io só entra quando houver uma build revisada e aprovada para distribuição.
 
 ## Tipo de build
 
-Durante desenvolvimento, usar `Android Test APK`, assinado para depuração. Essa build é adequada para testes manuais e não deve ser tratada como release final de loja.
+Durante desenvolvimento, usar `Linux Test` para execução fora do editor. Android permanece configurado, mas está fora do ciclo ativo de teste.
 
 Configuração atual:
 
-- pacote: `com.igonoz.bathroommayhem`;
-- versão: `0.1.0-test`;
-- código: `1`;
-- arquitetura inicial: ARM64;
+- arquitetura: x86-64;
 - orientação: retrato;
-- modo imersivo: ligado;
-- SDK mínimo efetivo do template Godot 4.7: Android 7.0 / API 24.
-- SDK-alvo efetivo: API 36.
+- formato: executável ELF e arquivo `.pck` adjacente.
 
 ## Dependências locais instaladas
 
-- templates Android oficiais do Godot 4.7 em `~/.local/share/godot/export_templates/4.7.stable`;
-- Temurin OpenJDK 17 em `~/.local/share/bathroom-devtools/jdk17`;
-- Android SDK em `~/.local/share/bathroom-devtools/android-sdk`;
-- Platform Tools, Build Tools 35.0.1 e Platform 35;
-- caminhos Java e Android registrados no editor Godot 4.7.
+- templates oficiais Godot 4.7, incluindo `linux_debug.x86_64`, em `~/.local/share/godot/export_templates/4.7.stable`;
+- Godot portable em `godot_bin/`.
 
-## Build atual
+As dependências Android instaladas permanecem preservadas para uma futura fase móvel, mas não são necessárias para o ciclo atual.
 
-> **OBSOLETA — não distribuir para avaliação de gameplay.** A build atual valida apenas exportação Android e assets; ainda contém o protótipo de movimentação livre que contradiz o auto-runner canônico.
+## Build anterior
 
-> A próxima build deverá ser gerada depois de inspeção visual em janela/editor ou dispositivo Android: o ambiente headless disponível valida scripts e runtime, mas não expõe uma textura de viewport para captura PNG.
-
-- Arquivo: `builds/android/BathroomMayhem-test.apk`
-- Tamanho: aproximadamente 40 MB.
-- SHA-256: `82be6782c5d16838d8aa198459d74fd54e5f6fb347f7cf60a27552be2eec2dbe`
-- Pacote: `com.igonoz.bathroommayhem`
-- Versão: `0.1.0-test` (`versionCode` 1).
-- Assinatura de depuração verificada com APK Signature Scheme v2 e v3.
+O APK Android permanece arquivado apenas como registro técnico e não deve ser distribuído ou usado para avaliação.
 - Cena inicial inspecionada por captura do renderizador real após correções de borda e contraste.
 - Pendente: instalar e testar em aparelho físico.
 
@@ -53,49 +38,51 @@ Configuração atual:
 
 1. Abrir o projeto no Godot.
 2. Acessar **Project > Export**.
-3. Selecionar **Android Test APK**.
+3. Selecionar **Linux Test**.
 4. Corrigir avisos de dependências, se houver.
-5. Exportar para `builds/android/BathroomMayhem-test.apk`.
-6. Instalar em aparelho físico e executar o roteiro de teste.
+5. Exportar para `builds/linux/BathroomMayhem.x86_64`.
+6. Executar o binário mantendo o arquivo `.pck` ao lado dele.
 
 ## Geração pela linha de comando
 
-Depois que as dependências estiverem configuradas:
+Na raiz do projeto:
 
 ```bash
-mkdir -p builds/android
+mkdir -p builds/linux
 ./godot_bin/Godot_v4.7-stable_linux.x86_64 --headless --path . \
-  --export-debug "Android Test APK" builds/android/BathroomMayhem-test.apk
+  --export-debug "Linux Test" builds/linux/BathroomMayhem.x86_64
 ```
 
-## Publicação no itch.io
+## Execução local
 
-Criar inicialmente uma página como **Draft** ou **Restricted**, tipo “Downloadable”, plataforma Android. Enviar o APK e marcar claramente como teste fechado/pré-alpha. Não tornar pública até validar instalação, abertura, controles e reinício em pelo menos um aparelho real.
+No diretório `builds/linux`, executar:
 
-O texto e os metadados da página estão preparados em `ITCH_PAGE.md`. O fluxo de autenticação e envio está documentado em `GIT_AND_ITCH_SETUP.md`. O script `tools/publish_itch.sh` bloqueia intencionalmente o APK top-down obsoleto.
+```bash
+./BathroomMayhem.x86_64
+```
 
-Página Draft criada em: `https://igonoz.itch.io/bathroom-mayhem-full-pressure`. Nenhum APK foi publicado ainda.
+O arquivo `BathroomMayhem.pck` precisa permanecer no mesmo diretório. Nenhum envio ao itch.io será feito neste marco.
 
 ## Roteiro mínimo de teste
 
-- [ ] APK instala sem erro.
-- [ ] Jogo abre em retrato.
-- [ ] Interface não invade recortes ou barras do sistema.
+- [ ] Executável abre fora do editor.
+- [ ] Jogo abre na janela em retrato.
 - [ ] Luana corre automaticamente para a direita.
-- [ ] Toque curto executa pulo.
-- [ ] Segurar prolonga o pulo.
-- [ ] Swipe para baixo executa slide.
-- [ ] Duplo toque executa `Controlled Relief`.
+- [ ] Espaço executa pulo e segurá-lo prolonga o salto.
+- [ ] Seta para baixo executa slide.
+- [ ] `F` executa `Controlled Relief`.
 - [ ] Não aparece joystick virtual.
 - [ ] Coletáveis, NPCs e obstáculos respondem ao movimento lateral.
 - [ ] Vitória e derrota são alcançáveis.
-- [ ] Toque reinicia a partida.
-- [ ] Fechar e reabrir o aplicativo funciona.
+- [ ] `R` reinicia a partida e Enter avança pelas telas.
+- [ ] Fechar e reabrir o jogo funciona.
 - [ ] Desempenho permanece estável por cinco partidas.
 # Build atual de teste
 
-- Arquivo: `builds/android/BathroomMayhem-test.apk` (arquivo local ignorado pelo Git).
+- Arquivo principal: `builds/linux/BathroomMayhem.x86_64` e `builds/linux/BathroomMayhem.pck` (arquivos locais ignorados pelo Git).
+- Execução: `./builds/linux/BathroomMayhem.x86_64` no diretório do projeto.
+- Alvo: Linux x86-64; Android está suspenso nesta fase.
 - Data: 2026-09-19.
-- SHA-256: `229ba79314aeccc1892be12be0479c67ab23d6397b492bcf9a954802ad81b985`.
-- Conteúdo: build de revisão da fase única, com quatro trechos de percurso, logo no menu, HUD de trecho e ciclo de oito poses.
-- Estado: exportado e assinado pelo fluxo de debug do Godot; **não é candidata a publicação**. Requer revisão visual e teste físico conforme `RECOVERY_PLAN.md`.
+- SHA-256: `edaf3670eefe230dc711319e7bd4d08e546652a1c93922910d07baaf2d775fa0`.
+- Conteúdo: build de revisão da fase única, com quatro trechos de percurso, logo no menu, HUD de trecho e ciclo inicial de corrida.
+- Estado: exportado; **não é candidata a publicação**. Requer abertura, revisão visual e uma partida completa com teclado fora do editor conforme `RECOVERY_PLAN.md`.

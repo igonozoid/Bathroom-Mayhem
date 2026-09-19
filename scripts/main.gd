@@ -6,7 +6,7 @@ const PLAYER_X := 112.0
 const SPEED := 275.0
 const GRAVITY := 1750.0
 const JUMP_POWER := -780.0
-const GOAL := 15400.0
+const GOAL := 17000.0
 const SHEET := preload("res://assets/art/characters/luana/luana_actions_v1.png")
 const LUANA_RUN_CONTACT := preload("res://assets/art/characters/luana/v2/luana_run_contact_v2.png")
 const LUANA_RUN_PASSING := preload("res://assets/art/characters/luana/v2/luana_run_passing_v2.png")
@@ -84,6 +84,10 @@ func _process(delta: float) -> void:
 
 
 func capture_preview() -> void:
+	if DisplayServer.get_name() == "headless":
+		print("Viewport capture skipped: the headless renderer has no readable viewport texture.")
+		get_tree().quit()
+		return
 	await get_tree().process_frame
 	await get_tree().process_frame
 	RenderingServer.force_draw()

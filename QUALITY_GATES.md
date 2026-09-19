@@ -35,4 +35,4 @@ A captura é gravada em `/tmp/bathroom-mayhem-preview.png`. Esse modo não é ac
 
 ## Limite atual
 
-Uma build Android só pode ser considerada aprovada para distribuição após instalação e teste em pelo menos um aparelho físico. Compilação e assinatura, isoladamente, não substituem esse teste.
+Enquanto o alvo é Linux, a build só pode ser considerada aprovada após executar fora do editor e passar pelo fluxo completo com teclado. A validação Android foi adiada; quando ela retornar, instalação e teste em aparelho físico serão obrigatórios antes de qualquer distribuição móvel.
