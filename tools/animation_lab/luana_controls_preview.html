@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Luana — controles e transições</title>
+  <style>
+    :root{--navy:#173c5d;--aqua:#61d9d2;--sand:#f7c96b;--coral:#ff796c}*{box-sizing:border-box}body{margin:0;background:#fff5dc;color:var(--navy);font-family:system-ui,sans-serif}main{max-width:920px;margin:auto;padding:32px}.eyebrow{font-weight:850;letter-spacing:.04em}h1{margin:4px 0}.stage{height:560px;margin:22px 0;border:8px solid var(--navy);border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(#73cfeb 0 54%,#73dce0 54% 58%,var(--sand) 58%)}.stage:after{content:"";position:absolute;inset:62% 0 0;background:repeating-linear-gradient(169deg,transparent 0 26px,#e6a94b 28px 31px);opacity:.65}.ground{position:absolute;z-index:1;left:0;right:0;bottom:65px;border-top:7px solid var(--navy)}#sprite{position:absolute;z-index:2;bottom:65px;left:calc(50% - 176px);width:351px;height:281px;object-fit:contain;filter:drop-shadow(9px 10px 0 rgba(23,60,93,.2))}.panel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:4px solid var(--navy);border-radius:18px;padding:16px}button{font:800 15px system-ui;border:3px solid var(--navy);border-radius:12px;padding:9px 13px;color:var(--navy);background:#fff;cursor:pointer}button.active,button#toggle{background:var(--aqua)}input{accent-color:var(--coral)}output,.meta{font-weight:800}.meta{margin-left:auto}@media(max-width:600px){main{padding:16px}.stage{height:460px}.meta{margin-left:0}}
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">BATHROOM MAYHEM · ANIMATION QA</p>
+    <h1>Luana — controles e transições</h1>
+    <p>Corrida é a base; toque gera salto curto, segurar gera salto prolongado, e <kbd>↓</kbd> gera slide.</p>
+    <section class="stage"><img id="sprite" alt="Quadro de animação de Luana"><div class="ground"></div></section>
+    <section class="panel">
+      <button data-mode="run" class="active">Corrida</button>
+      <button data-mode="short">Corrida → salto curto → corrida</button>
+      <button data-mode="long">Corrida → salto longo → corrida</button>
+      <button data-mode="slide">Corrida → slide → corrida</button>
+      <button id="toggle">Pausar</button>
+      <label>FPS <input id="fps" type="range" min="8" max="20" value="14"> <output id="value">14</output></label>
+      <span class="meta" id="frame"></span>
+    </section>
+  </main>
+  <script>
+    const path='../../assets/art/characters/luana/v3/';
+    const pad=i=>String(i).padStart(2,'0');
+    const run=Array.from({length:16},(_,i)=>({state:'corrida',src:`${path}run_clean/luana_run_clean_${pad(i)}.png`}));
+    const short=Array.from({length:16},(_,i)=>({state:'salto curto',src:`${path.replace('v3/','v4/')}jump_short/luana_v4_short_${pad(i)}.png`}));
+    const long=Array.from({length:16},(_,i)=>({state:'salto prolongado',src:`${path}jump_long/luana_jump_${pad(i)}.png`}));
+    const slide=Array.from({length:16},(_,i)=>({state:'slide',src:`${path.replace('v3/','v4/')}slide/luana_v4_slide_${pad(i)}.png`}));
+    const modes={run,short:[...run.slice(0,8),...short,...run.slice(8)],long:[...run.slice(0,8),...long,...run.slice(8)],slide:[...run.slice(0,8),...slide,...run.slice(8)]};
+    const sprite=document.querySelector('#sprite'),toggle=document.querySelector('#toggle'),slider=document.querySelector('#fps'),value=document.querySelector('#value'),label=document.querySelector('#frame');
+    const params=new URLSearchParams(location.search);
+    let mode=params.get('mode')||'run';
+    if(!modes[mode]) mode='run';
+    let index=Math.max(0,Math.min(modes[mode].length-1,Number.parseInt(params.get('frame')||'0',10)||0)),playing=true,timer;
+    function render(){const current=modes[mode][index];sprite.src=current.src;label.textContent=`${current.state} · quadro ${String(index+1).padStart(2,'0')} / ${modes[mode].length}`;}
+    function play(){clearInterval(timer);if(playing)timer=setInterval(()=>{index=(index+1)%modes[mode].length;render()},1000/Number(slider.value));}
+    function selectMode(next,reset=true){mode=next;if(reset)index=0;document.querySelectorAll('[data-mode]').forEach(item=>item.classList.toggle('active',item.dataset.mode===mode));render();play();}
+    document.querySelectorAll('[data-mode]').forEach(button=>button.onclick=()=>selectMode(button.dataset.mode));
+    toggle.onclick=()=>{playing=!playing;toggle.textContent=playing?'Pausar':'Continuar';play()};slider.oninput=()=>{value.value=slider.value;play()};selectMode(mode,false);
+  </script>
+</body>
+</html>

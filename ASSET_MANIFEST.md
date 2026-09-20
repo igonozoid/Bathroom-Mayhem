@@ -15,6 +15,13 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 - Uso: candidato para o ciclo principal. Deve passar por revisão de movimento no visualizador HTML antes de entrar na fase.
 - Fonte preservada: `assets/art/characters/luana/png_source/luana_run_cycle_16_magenta_source.png`.
 
+### `assets/art/characters/luana/v4/jump_short/` e `slide/`
+
+- Arquivos: 16 quadros de salto curto e 16 de slide; cada quadro tem 351 × 281 px e alfa real. As sheets consolidadas ficam em `v4/sheets/`.
+- Função: candidatas enquadradas para os controles do auto-runner, a serem avaliadas exclusivamente junto da corrida no laboratório `tools/animation_lab/luana_controls_preview.html`.
+- Fontes preservadas e aprovadas para enquadramento: `png_source/luana_jump_short_16_magenta_source_v4.png` e `png_source/luana_slide_16_magenta_source_v4.png`.
+- Histórico: as fontes de 12 quadros e seus recortes em `v3/jump_short/` e `v3/slide/` foram reprovados por células quebradas; são preservados, mas não devem ser integrados.
+
 ### `assets/art/characters/luana/v2/`
 
 - Arquivos: oito poses de corrida `luana_run_*_v2.png`, além de `luana_jump_short_v2.png` e `luana_jump_long_v2.png`.

@@ -18,8 +18,8 @@ O jogador controla Luana em auto-run lateral. Uma peça só entra em produção 
 | --- | --- | --- |
 | 1 | Folha de estilo | paleta, espessura de contorno, proporção e grid de 16 px |
 | 2 | Rig de Luana | corpo reconhecível e coerente em pose neutra |
-| 3 | Ciclo de corrida | 8 poses em loop sem “pulos” de anatomia |
-| 4 | Ações de Luana | salto curto, salto longo, slide, impacto e vitória |
+| 3 | Conjunto de controle de Luana | corrida, salto e slide com o mesmo pivô, escala e anatomia |
+| 4 | Reações de Luana | impacto, vitória e estados de Pressure |
 | 5 | Kit de obstáculos/itens | silhuetas reconhecíveis e hitboxes claras |
 | 6 | Cenário em planos | céu, praia distante e primeiro plano com scroll distinto |
 | 7 | HUD e telas | fluxo inteiro clicável antes da integração definitiva |
@@ -45,14 +45,22 @@ Para o prólogo, Luana usa quadros PNG ilustrados, em vez do rig SVG experimenta
 | --- | --- | --- |
 | Corrida | `assets/art/characters/luana/v3/run_clean/luana_run_clean_00..15.png` | ciclo de 16 poses |
 | Fonte preservada | `png_source/luana_run_cycle_16_magenta_source.png` | master antes do chaveamento |
-| Próximas ações | salto, slide, impacto e vitória em folhas PNG separadas | estados de gameplay |
+| Ações obrigatórias | salto curto, salto prolongado e slide em folhas PNG separadas | controles do gameplay |
 
 Silhueta: adulta, curvilínea/chubby atlética, cabelo preto longo com reflexo azul, top branco e shorts aqua. Não haverá troca de anatomia entre poses.
 
-### Animações de Luana
+### Conjunto de controle de Luana
 
-| Estado | Quadros/poses | Critério de aceitação |
-| --- | --- | --- |
+Corrida, salto e slide são um único pacote de personagem. Nenhuma das três ações será integrada isoladamente: todas usam o mesmo canvas, a mesma linha de chão, o pivô central dos pés e a mesma escala de Luana. O teste deve permitir mudar de estado sem troca perceptível de anatomia.
+
+| Estado | Quadros/poses | Gesto/tecla | Critério de aceitação |
+| --- | --- | --- | --- |
+| Corrida | 16 em loop | estado padrão | passada contínua, corpo e cabelo com peso, sem deslocar o pivô |
+| Salto curto | 16: impulso 3, subida 3, topo 4, queda 3, aterrissagem 3 | toque / `Espaço` | arco rápido e pernas recolhidas; volta à corrida sem congelar |
+| Salto prolongado | 16: impulso 3, subida 4, topo sustentado 4, queda 3, aterrissagem 2 | segurar toque / `Espaço` | visual inequivocamente mais alto e mais longo que o salto curto |
+| Slide | 16: entrada 3, deslize 8, saída 5 | swipe para baixo / `↓` | silhueta baixa o bastante para passar sob a gaivota, sem parecer uma pose de corrida inclinada |
+
+Antes da integração, o laboratório deve testar as sequências `corrida → salto curto → corrida`, `corrida → salto prolongado → corrida` e `corrida → slide → corrida`, a 12, 15 e 18 fps.
 | Corrida | 16 | pés alternam contato, passagem e extensão; cabeça e tronco mantêm massa |
 | Salto curto | 3 | saída, ápice, queda; arco curto |
 | Salto longo | 4 | saída, extensão, ápice, queda; arco claramente maior |
