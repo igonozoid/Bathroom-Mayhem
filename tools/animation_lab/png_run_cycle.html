@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Luana — ciclo PNG de 16 poses</title>
+  <style>
+    :root{--navy:#173c5d;--aqua:#61d9d2;--sand:#f7c96b}*{box-sizing:border-box}body{margin:0;background:#fff5dc;color:var(--navy);font-family:system-ui,sans-serif}main{max-width:920px;margin:auto;padding:32px}h1{margin:0}.stage{height:560px;margin:22px 0;border:8px solid var(--navy);border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(#73cfeb 0 54%,#73dce0 54% 58%,var(--sand) 58%)}.stage:after{content:"";position:absolute;inset:62% 0 0;background:repeating-linear-gradient(169deg,transparent 0 26px,#e6a94b 28px 31px);opacity:.65}.ground{position:absolute;z-index:1;left:0;right:0;bottom:65px;border-top:7px solid var(--navy)}#sprite{position:absolute;z-index:2;bottom:65px;left:calc(50% - 176px);width:351px;height:281px;object-fit:contain;image-rendering:auto;filter:drop-shadow(9px 10px 0 rgba(23,60,93,.2))}.panel{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#fff;border:4px solid var(--navy);border-radius:18px;padding:16px}button{font:800 16px system-ui;border:3px solid var(--navy);border-radius:12px;padding:9px 16px;color:var(--navy);background:var(--aqua);cursor:pointer}input{accent-color:#ff796c}output{font-weight:800}.meta{margin-left:auto;font-weight:700}@media(max-width:600px){main{padding:16px}.stage{height:460px}#sprite{left:calc(50% - 176px)}.meta{margin-left:0}}
+  </style>
+</head>
+<body>
+  <main>
+    <p><strong>BATHROOM MAYHEM · ANIMATION QA</strong></p>
+    <h1>Luana — corrida PNG (16 poses)</h1>
+    <p>Teste de continuidade, escala e bordas antes de integrar ao Godot.</p>
+    <section class="stage"><img id="sprite" alt="Quadro da corrida de Luana"><div class="ground"></div></section>
+    <section class="panel"><button id="toggle">Pausar</button><label>FPS <input id="fps" type="range" min="8" max="20" value="14"> <output id="value">14</output></label><span class="meta" id="frame">Quadro 01 / 16</span></section>
+  </main>
+  <script>
+    const frames=Array.from({length:16},(_,i)=>`../../assets/art/characters/luana/v3/run_clean/luana_run_clean_${String(i).padStart(2,'0')}.png`);
+    const sprite=document.querySelector('#sprite'),toggle=document.querySelector('#toggle'),slider=document.querySelector('#fps'),value=document.querySelector('#value'),frameLabel=document.querySelector('#frame');
+    let index=0,playing=true,timer;
+    function render(){sprite.src=frames[index];frameLabel.textContent=`Quadro ${String(index+1).padStart(2,'0')} / 16`;}
+    function play(){clearInterval(timer);if(playing)timer=setInterval(()=>{index=(index+1)%frames.length;render()},1000/Number(slider.value));}
+    toggle.onclick=()=>{playing=!playing;toggle.textContent=playing?'Pausar':'Continuar';play()};slider.oninput=()=>{value.value=slider.value;play()};
+    render();play();
+  </script>
+</body>
+</html>

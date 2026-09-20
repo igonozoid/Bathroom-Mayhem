@@ -14,7 +14,7 @@ Cartoon 2D lateral vetorial, expressivo e legível em celulares. A estética mis
 - detalhes reduzidos para leitura entre 64 e 160 px;
 - movimento elástico, expressões amplas e poses claras;
 - perspectiva lateral ortográfica no gameplay;
-- SVG modular e editável para personagem, UI, itens e props; fundos também usam formas vetoriais simplificadas.
+- Luana usa quadros ilustrados em PNG para as animações principais; SVG modular permanece apropriado para UI, itens e props. Fundos podem usar formas vetoriais simplificadas.
 - interface com volumes brilhantes e ícones compactos.
 
 ## Paleta principal
@@ -51,7 +51,7 @@ Priorizar linhas de ação e leitura imediata. Estados principais:
 3. urgente;
 4. pânico/Code Brown.
 
-A folha `luana_actions_v1.png` contém 12 poses-base para idle, corrida, salto, aterrissagem, queda, recuperação e progressão de pressão. Ela é uma base de produção; ciclos finais devem ser normalizados quadro a quadro antes de animação definitiva.
+A folha `luana_actions_v1.png` contém 12 poses-base para idle, corrida, salto, aterrissagem, queda, recuperação e progressão de pressão. A candidata atual de corrida está em `assets/art/characters/luana/v3/run_clean/`, com 16 quadros PNG normalizados. Ela ainda precisa de aprovação de fluidez e de borda em movimento antes de entrar no jogo.
 
 ## Praia — Beach Run
 

@@ -6,6 +6,15 @@ Todos os arquivos abaixo são artes originais geradas para Bathroom Mayhem com a
 
 ## Personagem
 
+### `assets/art/characters/luana/v3/run_clean/`
+
+- Arquivos: 16 PNGs `luana_run_clean_00.png` a `luana_run_clean_15.png`.
+- Dimensão normalizada: 351 × 281 px por quadro.
+- Alfa real: sim (`sRGBA`), verificado após chaveamento do fundo magenta de produção.
+- Conteúdo: ciclo de corrida lateral para Luana adulta, curvilínea/chubby atlética, com cabelo preto/azul, top branco e shorts aqua.
+- Uso: candidato para o ciclo principal. Deve passar por revisão de movimento no visualizador HTML antes de entrar na fase.
+- Fonte preservada: `assets/art/characters/luana/png_source/luana_run_cycle_16_magenta_source.png`.
+
 ### `assets/art/characters/luana/v2/`
 
 - Arquivos: oito poses de corrida `luana_run_*_v2.png`, além de `luana_jump_short_v2.png` e `luana_jump_long_v2.png`.

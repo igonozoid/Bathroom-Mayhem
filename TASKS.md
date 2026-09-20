@@ -46,6 +46,8 @@ Prioridades: **P0** bloqueia a publicação; **P1** melhora significativamente a
 - [x] **P1** Criar atlas inicial de efeitos de gameplay.
 - [x] **P1** Produzir um ciclo inicial da Luana com transparência verificada e saltos distintos.
 - [x] **P1** Reduzir a ocupação visual da Luana para ampliar a leitura do percurso.
+- [x] **P1** Produzir candidata de corrida da Luana com 16 quadros PNG e visualizador no navegador.
+- [ ] **P0** Aprovar o ciclo de corrida em movimento e corrigir qualquer halo colorido antes da integração ao Godot.
 - [ ] **P1** Fazer ao menos uma rodada de playtest externo.
 - [ ] **P1** Registrar métricas simples de balanceamento durante os testes.
 - [ ] **P2** Adicionar variedade ou conteúdo extra.

@@ -37,16 +37,15 @@ Cada pacote será testado antes de iniciar o seguinte. O primeiro teste ocorre e
 
 Regras: pivô de personagem no centro dos pés; arquivos em `assets/vector/`; cada SVG tem `viewBox`; sem texto rasterizado; sem efeitos que dependam de fonte externa.
 
-## 2. Luana modular
+## 2. Luana em PNG animado
 
-Arquivos independentes, todos com transparência e pivôs anotados no nome/documentação:
+Para o prólogo, Luana usa quadros PNG ilustrados, em vez do rig SVG experimental. Isso preserva qualidade de desenho e evita a aparência geométrica do protótipo vetorial. Os SVGs continuam arquivados como estudo, não como arte ativa.
 
 | Grupo | Arquivos | Uso |
 | --- | --- | --- |
-| Corpo | `luana_torso`, `luana_hips`, `luana_head`, `luana_hair_back`, `luana_hair_front` | base reutilizável |
-| Membros | `luana_arm_front`, `luana_arm_back`, `luana_leg_front`, `luana_leg_back`, `luana_shoe_front`, `luana_shoe_back` | rig e poses |
-| Face | `luana_face_neutral`, `luana_face_urgent`, `luana_face_panic`, `luana_face_victory` | estados de Pressure e telas |
-| Acessórios | `luana_nose_piercing`, `luana_sweat_drop` | leitura de personagem |
+| Corrida | `assets/art/characters/luana/v3/run_clean/luana_run_clean_00..15.png` | ciclo de 16 poses |
+| Fonte preservada | `png_source/luana_run_cycle_16_magenta_source.png` | master antes do chaveamento |
+| Próximas ações | salto, slide, impacto e vitória em folhas PNG separadas | estados de gameplay |
 
 Silhueta: adulta, curvilínea/chubby atlética, cabelo preto longo com reflexo azul, top branco e shorts aqua. Não haverá troca de anatomia entre poses.
 
@@ -54,7 +53,7 @@ Silhueta: adulta, curvilínea/chubby atlética, cabelo preto longo com reflexo a
 
 | Estado | Quadros/poses | Critério de aceitação |
 | --- | --- | --- |
-| Corrida | 8 | pés alternam contato, passagem e extensão; cabeça e tronco mantêm massa |
+| Corrida | 16 | pés alternam contato, passagem e extensão; cabeça e tronco mantêm massa |
 | Salto curto | 3 | saída, ápice, queda; arco curto |
 | Salto longo | 4 | saída, extensão, ápice, queda; arco claramente maior |
 | Slide | 3 | entrada, sustentação, saída; silhueta baixa |
@@ -124,4 +123,3 @@ O mesmo teste será repetido em uma cena Godot isolada, usando os SVGs importado
 ## Fora do prólogo
 
 Ficam fora: segunda fase, roupas alternativas, inimigos adicionais, loja, monetização, ranking, cutscene e publicação.
-
